@@ -1,0 +1,11 @@
+D:\Programs\AtCoder\ABC104\A\bin\Debug\netcoreapp2.0\A.deps.json
+D:\Programs\AtCoder\ABC104\A\bin\Debug\netcoreapp2.0\A.runtimeconfig.json
+D:\Programs\AtCoder\ABC104\A\bin\Debug\netcoreapp2.0\A.runtimeconfig.dev.json
+D:\Programs\AtCoder\ABC104\A\bin\Debug\netcoreapp2.0\A.dll
+D:\Programs\AtCoder\ABC104\A\bin\Debug\netcoreapp2.0\A.pdb
+D:\Programs\AtCoder\ABC104\A\obj\Debug\netcoreapp2.0\A.csprojAssemblyReference.cache
+D:\Programs\AtCoder\ABC104\A\obj\Debug\netcoreapp2.0\A.csproj.CoreCompileInputs.cache
+D:\Programs\AtCoder\ABC104\A\obj\Debug\netcoreapp2.0\A.AssemblyInfoInputs.cache
+D:\Programs\AtCoder\ABC104\A\obj\Debug\netcoreapp2.0\A.AssemblyInfo.cs
+D:\Programs\AtCoder\ABC104\A\obj\Debug\netcoreapp2.0\A.dll
+D:\Programs\AtCoder\ABC104\A\obj\Debug\netcoreapp2.0\A.pdb

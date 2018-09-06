@@ -1,0 +1,17 @@
+D:\Programs\AtCoder\ABC104\TestB\bin\Debug\netcoreapp2.0\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+D:\Programs\AtCoder\ABC104\TestB\bin\Debug\netcoreapp2.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+D:\Programs\AtCoder\ABC104\TestB\bin\Debug\netcoreapp2.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+D:\Programs\AtCoder\ABC104\TestB\bin\Debug\netcoreapp2.0\TestB.deps.json
+D:\Programs\AtCoder\ABC104\TestB\bin\Debug\netcoreapp2.0\TestB.runtimeconfig.json
+D:\Programs\AtCoder\ABC104\TestB\bin\Debug\netcoreapp2.0\TestB.runtimeconfig.dev.json
+D:\Programs\AtCoder\ABC104\TestB\bin\Debug\netcoreapp2.0\TestB.dll
+D:\Programs\AtCoder\ABC104\TestB\bin\Debug\netcoreapp2.0\TestB.pdb
+D:\Programs\AtCoder\ABC104\TestB\bin\Debug\netcoreapp2.0\B.dll
+D:\Programs\AtCoder\ABC104\TestB\bin\Debug\netcoreapp2.0\B.pdb
+D:\Programs\AtCoder\ABC104\TestB\obj\Debug\netcoreapp2.0\TestB.csprojAssemblyReference.cache
+D:\Programs\AtCoder\ABC104\TestB\obj\Debug\netcoreapp2.0\TestB.csproj.CoreCompileInputs.cache
+D:\Programs\AtCoder\ABC104\TestB\obj\Debug\netcoreapp2.0\TestB.AssemblyInfoInputs.cache
+D:\Programs\AtCoder\ABC104\TestB\obj\Debug\netcoreapp2.0\TestB.AssemblyInfo.cs
+D:\Programs\AtCoder\ABC104\TestB\obj\Debug\netcoreapp2.0\TestB.csproj.CopyComplete
+D:\Programs\AtCoder\ABC104\TestB\obj\Debug\netcoreapp2.0\TestB.dll
+D:\Programs\AtCoder\ABC104\TestB\obj\Debug\netcoreapp2.0\TestB.pdb

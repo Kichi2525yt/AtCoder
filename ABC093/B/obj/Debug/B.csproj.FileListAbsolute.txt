@@ -1,0 +1,7 @@
+D:\Programs\AtCoder\ABC093\B\bin\Debug\B.exe.config
+D:\Programs\AtCoder\ABC093\B\bin\Debug\B.exe
+D:\Programs\AtCoder\ABC093\B\bin\Debug\B.pdb
+D:\Programs\AtCoder\ABC093\B\obj\Debug\B.csproj.CoreCompileInputs.cache
+D:\Programs\AtCoder\ABC093\B\obj\Debug\B.exe
+D:\Programs\AtCoder\ABC093\B\obj\Debug\B.pdb
+D:\Programs\AtCoder\ABC093\B\obj\Debug\B.csprojResolveAssemblyReference.cache
