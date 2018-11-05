@@ -1,7 +1,18 @@
 #include <iostream>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <algorithm>
 #include <string>
-#include <vector>
 #include <sstream>
+#include <complex>
+#include <vector>
+#include <list>
+#include <queue>
+#include <deque>
+#include <stack>
+#include <map>
+#include <set>
 
 using namespace std;
 
@@ -13,6 +24,19 @@ using namespace std;
 #define inps(s) std::string s; cin >> s;
 #define out(a) cout<<a<<endl;
 #define pb(a) push_back((a))
+#define endl "\n"
+#define vi vector<int>
+
+
+int main() {
+	cin.tie(nullptr);
+	ios::sync_with_stdio(false);
+
+	
+
+	return 0;
+}
+
 
 ll conv(const string num) { stringstream ss; ss << num << flush; ll n; ss >> n; return n; }
 string conv(const ll n) { stringstream ss; ss << n << flush; return ss.str(); }
@@ -32,8 +56,4 @@ vector<string> split(string s, string delim) {
 		pos = found + delim.size();
 	}
 	return res;
-}
-
-int main() {
-
 }
