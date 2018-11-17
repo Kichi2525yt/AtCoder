@@ -24,6 +24,7 @@
 #include <complex>
 #include <cmath>
 #include <array>
+#include <iomanip>
 
 using namespace std;
 
@@ -35,13 +36,13 @@ using namespace std;
 #define out(a) cout<<a<<endl;
 #define pb(a) push_back((a))
 #define endl "\n"
-#define invi(vec, n) vi(vec)(n); invec((vec), (n));
+#define invi(vec, n) vint (vec)(n); invec((vec), (n));
 #define invec(vec, n) rep(i, (n)) cin >> vec[i];
 #define mp make_pair
 #define mt make_tuple
-typedef long long ll;
-typedef unsigned long long ulong;
+
 typedef unsigned int uint;
+typedef long long ll;
 typedef vector<int> vint;
 typedef vector<ll> vlong;
 typedef vector<pair<int, int>> vpair;
@@ -53,11 +54,44 @@ const ll MINL = -922337203685775808;
 ll conv(const string num) { stringstream ss; ss << num << flush; ll n; ss >> n; return n; }
 string conv(const ll n) { stringstream ss; ss << n << flush; return ss.str(); }
 
+bool contains(vector<int> list, int a)
+{
+	rep(i, list.size())
+	{
+		if (list[i] == a) return true;
+	}
+	return false;
+}
+
 int main() {
 	cin.tie(nullptr);
 	ios::sync_with_stdio(false);
 
+	int A, B, C;
 	
 
+
+
+
+
 	return 0;
+}
+
+
+
+vector<string> split(string s, string delim) {
+	vector<string> res;
+	auto pos = 0;
+	while (true) {
+		const int found = s.find(delim, pos);
+		if (found >= 0) {
+			res.push_back(s.substr(pos, found - pos));
+		}
+		else {
+			res.push_back(s.substr(pos));
+			break;
+		}
+		pos = found + delim.size();
+	}
+	return res;
 }
