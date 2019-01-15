@@ -15,15 +15,14 @@ using namespace std;
 #define mt make_tuple
 #define endl "\n";
 typedef long long ll;
-typedef unsigned long long ulong;
 typedef unsigned int uint;
 typedef vector<int> vint;
 typedef vector<ll> vlong;
 typedef vector<pair<int, int>> vpair;
-const int MAX =   2147483647;
-const int MIN = 0-2147483648;
-const ll MAXL =   922337203685775807;
-const ll MINL = 0-922337203685775808;
+const int MAX = 2147483647;
+const int MIN = 0 - 2147483648;
+const ll MAXL = 922337203685775807;
+const ll MINL = 0 - 922337203685775808;
 #pragma endregion
 
 #pragma region methods/operators
@@ -63,7 +62,6 @@ istream& operator >> (istream& is, vector<T>& vec)
 	for (T& x : vec) is >> x;
 	return is;
 }
-
 #pragma endregion
 
 
@@ -71,8 +69,10 @@ int main() {
 	cin.tie(nullptr);
 	ios::sync_with_stdio(false);
 
+	int X;
+	cin >> X;
+	cout << (X == 7 || X == 5 || X == 3 ? "YES" : "NO") << endl;
 
 
 
-	return 0;
 }
