@@ -1,7 +1,0 @@
-D:\Programs\AtCoder\ABC094\D\bin\Debug\D.exe.config
-D:\Programs\AtCoder\ABC094\D\bin\Debug\D.exe
-D:\Programs\AtCoder\ABC094\D\bin\Debug\D.pdb
-D:\Programs\AtCoder\ABC094\D\obj\Debug\D.csprojResolveAssemblyReference.cache
-D:\Programs\AtCoder\ABC094\D\obj\Debug\D.csproj.CoreCompileInputs.cache
-D:\Programs\AtCoder\ABC094\D\obj\Debug\D.exe
-D:\Programs\AtCoder\ABC094\D\obj\Debug\D.pdb

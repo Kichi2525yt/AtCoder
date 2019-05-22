@@ -1,3 +1,0 @@
-﻿  C_CPP.cpp
-  C_CPP.obj : マネージ コードが存在する場合は、/DEBUG:FASTLINK はサポートされません。/DEBUG:FULL でリンクを再開します
-  C_CPP.vcxproj -> D:\Programs\AtCoder\ABC092\Debug\C_CPP.exe
