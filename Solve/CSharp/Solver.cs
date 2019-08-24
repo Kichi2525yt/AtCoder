@@ -17,185 +17,39 @@
 // ReSharper disable MemberCanBeMadeStatic.Global
 // ReSharper disable UnusedMember.Local
 // ReSharper disable NonReadonlyMemberInGetHashCode
+// ReSharper disable CheckNamespace
 #pragma warning disable
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Deployment.Internal;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Text;
 using static System.Math;
 using static AtCoder.Input;
 using static AtCoder.Methods;
 using MethodImpl = System.Runtime.CompilerServices.MethodImplAttribute;
 using MethodImplOptions = System.Runtime.CompilerServices.MethodImplOptions;
 
-#if !LOCAL
-namespace Library { }
-#endif
 namespace AtCoder
 {
     #region Templete
 
-    [System.Diagnostics.DebuggerDisplay("({first}, {second})")]
-    public class Pair<T1, T2> : IComparable<Pair<T1, T2>>, IEquatable<Pair<T1, T2>>
-        where T1 : IComparable<T1>
-        where T2 : IComparable<T2>
-    {
-        public Pair(T1 first, T2 second)
-        {
-            this.first = first;
-            this.second = second;
-        }
-
-        public T1 first;
-        public T2 second;
-
-        public int CompareTo(Pair<T1, T2> other)
-        {
-            if (ReferenceEquals(this, other)) return 0;
-            if (ReferenceEquals(null, other)) return 1;
-            var firstComparison = first.CompareTo(other.first);
-            return firstComparison != 0 ? firstComparison : second.CompareTo(other.second);
-        }
-
-        public override string ToString() => $"({first}, {second})";
-
-        public bool Equals(Pair<T1, T2> other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return EqualityComparer<T1>.Default.Equals(first, other.first) && EqualityComparer<T2>.Default.Equals(second, other.second);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == this.GetType() && Equals((Pair<T1, T2>)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (EqualityComparer<T1>.Default.GetHashCode(first) * 397) ^ EqualityComparer<T2>.Default.GetHashCode(second);
-            }
-        }
-    }
-
-    [System.Diagnostics.DebuggerDisplay("Value = {" + nameof(_value) + "}")]
-    public struct ModInt : IEquatable<ModInt>, IComparable<ModInt>
-    {
-        private long _value;
-
-        public const int MOD = (int)1e9 + 7;
-
-        public static readonly ModInt Zero = new ModInt(0);
-
-        public static readonly ModInt One = new ModInt(1);
-
-        public ModInt(long value) { _value = value % MOD; }
-
-        private ModInt(int value) { _value = value; }
-
-        public int Value => (int)_value;
-
-        public ModInt Invert => ModPow(this, MOD - 2);
-
-        public static ModInt operator -(ModInt value)
-        {
-            value._value = MOD - value._value;
-            return value;
-        }
-
-        public static ModInt operator +(ModInt left, ModInt right)
-        {
-            left._value += right._value;
-            if (left._value >= MOD) left._value -= MOD;
-            return left;
-        }
-
-        public static ModInt operator -(ModInt left, ModInt right)
-        {
-            left._value -= right._value;
-            if (left._value < 0) left._value += MOD;
-            return left;
-        }
-
-        public static ModInt operator *(ModInt left, ModInt right)
-        {
-            left._value = left._value * right._value % MOD;
-            return left;
-        }
-
-        public static ModInt operator /(ModInt left, ModInt right) => left * right.Invert;
-
-        public static ModInt operator ++(ModInt value)
-        {
-            if (value._value == MOD - 1) value._value = 0;
-            else value._value++;
-            return value;
-        }
-
-        public static ModInt operator --(ModInt value)
-        {
-            if (value._value == 0) value._value = MOD - 1;
-            else value._value--;
-            return value;
-        }
-
-        public static bool operator ==(ModInt left, ModInt right) => left.Equals(right);
-
-        public static bool operator !=(ModInt left, ModInt right) => !left.Equals(right);
-
-        public static implicit operator ModInt(int value) => new ModInt(value);
-
-        public static implicit operator ModInt(long value) => new ModInt(value);
-
-        public static ModInt ModPow(ModInt value, long exponent)
-        {
-            var r = new ModInt(1);
-            for (; exponent > 0; value *= value, exponent >>= 1)
-                if ((exponent & 1) == 1) r *= value;
-            return r;
-        }
-
-        public static ModInt ModFact(int value)
-        {
-            var r = new ModInt(1);
-            for (var i = 2; i <= value; i++) r *= value;
-            return r;
-        }
-
-        public bool Equals(ModInt other) => _value == other._value;
-
-        public override bool Equals(object obj)
-        {
-            return obj != null && this.Equals((ModInt)obj);
-        }
-
-        public override int GetHashCode() => _value.GetHashCode();
-
-        public override string ToString() => _value.ToString();
-
-        public int CompareTo(ModInt other)
-        {
-            return _value.CompareTo(other._value);
-        }
-    }
-
+#if !LOCAL
+namespace Library { }
+#endif
     public static class Methods
     {
-        public static readonly int[] dx = { -1, 0, 0, 1 };
+        public static readonly int[] dx = {-1, 0, 0, 1};
 
-        public static readonly int[] dy = { 0, 1, -1, 0 };
+        public static readonly int[] dy = {0, 1, -1, 0};
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [System.Runtime.CompilerServices.MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Assert(bool b, string message = null)
         {
-            if(!b) throw new Exception(message ?? "Assert failed.");
+            if (!b) throw new Exception(message ?? "Assert failed.");
         }
 
         /*
@@ -204,6 +58,7 @@ namespace AtCoder
             => (a, b) => b.CompareTo(a);
         */
         public static void Print<T>(T t) => Console.WriteLine(t);
+        public static void Print(params object[] o) => Console.WriteLine(o.Join(" "));
 
         public static void PrintBool(bool val, string yes = "Yes", string no = "No")
             => Console.WriteLine(val ? yes : no);
@@ -251,6 +106,21 @@ namespace AtCoder
         /// <summary>aとbの最小公倍数を求めます。</summary>
         /// <returns>aとbの最小公倍数</returns>
         public static long Lcm(long a, long b) => a / Gcd(a, b) * b;
+
+        /// <summary>
+        /// 指定した数値が素数であるかを判定します。
+        /// </summary>
+        /// <remarks>計算量 (sqrt(value)) </remarks>
+        /// <param name="value">判定する数値</param>
+        /// <returns>value が素数であるか</returns>
+        public static bool IsPrime(long value)
+        {
+            if (value <= 1) return false;
+            for (long i = 2; i * i <= value; i++)
+                if (value % i == 0)
+                    return false;
+            return true;
+        }
 
         /// <summary>
         /// <see cref="a"/> ^ <see cref="b"/> (mod <see cref="p"/>) を求める
@@ -412,11 +282,116 @@ namespace AtCoder
             return UpperBound(arr, 0, arr.Length, value, Comparer<T>.Default);
         }
 
-        public static IEnumerable<TResult> SelectNotNull<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> func)
+        public static IEnumerable<TResult> SelectNotNull<TSource, TResult>(this IEnumerable<TSource> source,
+            Func<TSource, TResult> func)
             => source.Where(val => val != null).Select(func);
 
         public static IEnumerable<TSource> WhereNotNull<TSource>(this IEnumerable<TSource> source)
             => source.Where(val => val != null);
+
+        [System.Runtime.CompilerServices.MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static T[] ArrayOf<T>(params T[] arr) => arr;
+
+        [System.Runtime.CompilerServices.MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static List<T> ListOf<T>(params T[] arr) => new List<T>(arr);
+
+        public static IList<TSource> MaxBy<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+            return MaxBy(source, keySelector, Comparer<TKey>.Default);
+        }
+
+        public static IList<TSource> MaxBy<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
+            return ExtremaBy(source, keySelector, comparer.Compare);
+        }
+
+        public static IList<TSource> MinBy<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+            return MinBy(source, keySelector, Comparer<TKey>.Default);
+        }
+
+        public static IList<TSource> MinBy<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
+            return ExtremaBy(source, keySelector, (key, minValue) => -comparer.Compare(key, minValue));
+        }
+
+        private static IList<TSource> ExtremaBy<TSource, TKey>(IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector, Func<TKey, TKey, int> compare)
+        {
+            var result = new List<TSource>();
+
+            using (var e = source.GetEnumerator())
+            {
+                if (!e.MoveNext())
+                    throw new InvalidOperationException("シーケンスに要素がありませんでした。");
+
+                var current = e.Current;
+                var resKey = keySelector(current);
+                result.Add(current);
+
+                while (e.MoveNext())
+                {
+                    var cur = e.Current;
+                    var key = keySelector(cur);
+
+                    var cmp = compare(key, resKey);
+                    if (cmp == 0)
+                    {
+                        result.Add(cur);
+                    }
+                    else if (cmp > 0)
+                    {
+                        result = new List<TSource> {cur};
+                        resKey = key;
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public static IEnumerable<TResult> Repeat<TResult>(TResult value)
+        {
+            while (true) yield return value;
+            // ReSharper disable once IteratorNeverReturns
+        }
+
+        public static IEnumerable<TResult> Repeat<TResult>(TResult value, int count)
+            => Enumerable.Repeat(value, count);
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        public static IEnumerable<TResult> Repeat<TResult>(this IEnumerable<TResult> source, int count)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (count < 0) throw new ArgumentOutOfRangeException(nameof(count));
+            for (int i = 0; i < count; i++)
+                foreach (var v in source)
+                    yield return v;
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        public static IEnumerable<TResult> Repeat<TResult>(this IEnumerable<TResult> source)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            while (true)
+                foreach (var v in source)
+                    yield return v;
+        }
+
         /// <summary>
         /// 文字の配列を文字列に変換します。
         /// </summary>
@@ -445,6 +420,7 @@ namespace AtCoder
             foreach (var item in source)
                 yield return sum += item;
         }
+
         /// <summary>
         /// <see cref="value"/>が l以上 r未満の範囲に含まれているかを返します。
         /// </summary>
@@ -505,7 +481,8 @@ namespace AtCoder
         /// <returns>素因数の集合</returns>
         public static IEnumerable<int> Factorize(int value)
         {
-            for (int i = 2; i * i < value; i++)
+            int first = value;
+            for (int i = 2; i * i < first; i++)
             {
                 while (value % i == 0)
                 {
@@ -517,6 +494,7 @@ namespace AtCoder
             if (value > 1)
                 yield return value;
         }
+
         /// <summary>
         /// valueを素因数分解し、素因数を列挙します。
         /// </summary>
@@ -524,7 +502,8 @@ namespace AtCoder
         /// <returns>素因数の集合</returns>
         public static IEnumerable<long> Factorize(long value)
         {
-            for (long i = 2; i * i < value; i++)
+            long first = value;
+            for (long i = 2; i * i < first; i++)
             {
                 while (value % i == 0)
                 {
@@ -536,6 +515,7 @@ namespace AtCoder
             if (value > 1)
                 yield return value;
         }
+
         /// <summary>
         /// valueを素因数分解し、素因数とその個数の連想配列を返します。
         /// </summary>
@@ -544,8 +524,8 @@ namespace AtCoder
         public static Dictionary<long, int> FactorizeAsMap(long value)
         {
             var dict = new Dictionary<long, int>();
-
-            for (int i = 2; i * i < value; i++)
+            long first = value;
+            for (int i = 2; i * i < first; i++)
             {
                 if (value % i > 0) continue;
                 int cnt = 0;
@@ -554,6 +534,7 @@ namespace AtCoder
                     value /= i;
                     cnt++;
                 }
+
                 dict.Add(i, cnt);
             }
 
@@ -569,8 +550,8 @@ namespace AtCoder
         public static Dictionary<int, int> FactorizeAsMap(int value)
         {
             var dict = new Dictionary<int, int>();
-
-            for (int i = 2; i * i < value; i++)
+            int first = value;
+            for (int i = 2; i * i < first; i++)
             {
                 if (value % i > 0) continue;
                 int cnt = 0;
@@ -579,6 +560,7 @@ namespace AtCoder
                     value /= i;
                     cnt++;
                 }
+
                 dict.Add(i, cnt);
             }
 
@@ -614,6 +596,7 @@ namespace AtCoder
             Array.Reverse(array);
             return array;
         }
+
         /// <summary>
         /// valueの約数の個数を求めます。
         /// </summary>
@@ -625,15 +608,11 @@ namespace AtCoder
             return fact.Select(x => x.Value + 1L).Aggregate((m, x) => m * x);
         }
 
-        public static bool IsEven(this int x) => x % 2 == 0;
-        public static bool IsOdd(this int x) => x % 2 != 0;
-        public static bool IsEven(this long x) => x % 2 == 0;
-        public static bool IsOdd(this long x) => x % 2 != 0;
         public static double Log2(double x) => Log(x, 2);
 
-        public static bool chmin(ref int a, int b)
+        public static bool chmin<T>(ref T a, T b) where T : IComparable<T>
         {
-            if (a > b)
+            if (a.CompareTo(b) > 0)
             {
                 a = b;
                 return true;
@@ -642,31 +621,9 @@ namespace AtCoder
             return false;
         }
 
-        public static bool chmax(ref int a, int b)
+        public static bool chmax<T>(ref T a, T b) where T : IComparable<T>
         {
-            if (a < b)
-            {
-                a = b;
-                return true;
-            }
-
-            return false;
-        }
-
-        public static bool chmin(ref long a, long b)
-        {
-            if (a > b)
-            {
-                a = b;
-                return true;
-            }
-
-            return false;
-        }
-
-        public static bool chmax(ref long a, long b)
-        {
-            if (a < b)
+            if (a.CompareTo(b) < 0)
             {
                 a = b;
                 return true;
@@ -678,6 +635,25 @@ namespace AtCoder
         public static T Min<T>(params T[] col) => col.Min();
         public static T Max<T>(params T[] col) => col.Max();
 
+
+        /// <summary>
+        /// 要素数 (a, b) の、defaultValue で満たされた配列を作成します。
+        /// </summary>
+        /// <typeparam name="T">配列の型</typeparam>
+        /// <param name="a">1次元の要素数</param>
+        /// <param name="b">2次元の要素数</param>
+        /// <param name="defaultValue">デフォルト値</param>
+        /// <returns>指定した条件で初期化された配列</returns>
+        public static T[][] Array2D<T>(int a, int b, T defaultValue = default(T))
+        {
+            var ret = new T[a][];
+            for (int i = 0; i < a; i++)
+            {
+                ret[i] = Enumerable.Repeat(defaultValue, b).ToArray();
+            }
+
+            return ret;
+        }
     }
 
     public static class Input
@@ -696,7 +672,8 @@ namespace AtCoder
 
         public static string Read
         {
-            get {
+            get
+            {
                 if (_input.Count != 0) return _input.Dequeue();
 
                 // ReSharper disable once PossibleNullReferenceException
@@ -740,6 +717,7 @@ namespace AtCoder
 
         public static string[][] Str2DArray(int n, int m)
             => Enumerable.Repeat((string[]) null, n).Select(_ => StrArray(m)).ToArray();
+
         public static int[][] Int2DArray(int n, int m, int offset = 0)
             => Enumerable.Repeat((int[]) null, n).Select(_ => IntArray(m, offset)).ToArray();
 
@@ -758,6 +736,7 @@ namespace AtCoder
 
             return Tuple.Create(ret1, ret2);
         }
+
         public static Tuple<int[], int[]> IntArrays2(int n, int offset1 = 0, int offset2 = 0)
         {
             var ret1 = new int[n];
@@ -797,6 +776,7 @@ namespace AtCoder
 
             return Tuple.Create(ret1, ret2, ret3);
         }
+
         public static Tuple<int[], int[], int[]> IntArrays3(int n, int offset1 = 0, int offset2 = 0, int offset3 = 0)
         {
             var ret1 = new int[n];
@@ -812,7 +792,8 @@ namespace AtCoder
             return Tuple.Create(ret1, ret2, ret3);
         }
 
-        public static Tuple<long[], long[], long[]> LongArrays3(int n, long offset1 = 0, long offset2 = 0, long offset3 = 0)
+        public static Tuple<long[], long[], long[]> LongArrays3(int n, long offset1 = 0, long offset2 = 0,
+            long offset3 = 0)
         {
             var ret1 = new long[n];
             var ret2 = new long[n];
@@ -828,7 +809,7 @@ namespace AtCoder
         }
 
         static bool TypeEquals<T, U>() => typeof(T) == typeof(U);
-        static T ChangeType<T, U>(U a) => (T)System.Convert.ChangeType(a, typeof(T));
+        static T ChangeType<T, U>(U a) => (T) System.Convert.ChangeType(a, typeof(T));
 
         static T Convert<T>(string s) => TypeEquals<T, int>() ? ChangeType<T, int>(int.Parse(s))
             : TypeEquals<T, long>() ? ChangeType<T, long>(long.Parse(s))
@@ -854,7 +835,7 @@ namespace AtCoder
         {
             try
             {
-                var ar = StrArray(2);       
+                var ar = StrArray(2);
                 a = Convert<T>(ar[0]);
                 b = Convert<U>(ar[1]);
                 return true;
@@ -929,24 +910,6 @@ namespace AtCoder
                 return false;
             }
         }
-        /// <summary>
-        /// 要素数 (a, b) の、defaultValue で満たされた配列を作成します。
-        /// </summary>
-        /// <typeparam name="T">配列の型</typeparam>
-        /// <param name="a">1次元の要素数</param>
-        /// <param name="b">2次元の要素数</param>
-        /// <param name="defaultValue">デフォルト値</param>
-        /// <returns>指定した条件で初期化された配列</returns>
-        public static T[][] Array2D<T>(int a, int b, T defaultValue = default(T))
-        {
-            var ret = new T[a][];
-            for (int i = 0; i < a; i++)
-            {
-                ret[i] = Enumerable.Repeat(defaultValue, b).ToArray();
-            }
-
-            return ret;
-        }
     }
 
     public class Program
@@ -955,19 +918,69 @@ namespace AtCoder
         {
             var sw = new StreamWriter(Console.OpenStandardOutput()) {AutoFlush = false};
             Console.SetOut(sw);
-            new Solver().Solve();
+            new Solver().Main();
 
             Console.Out.Flush();
             Console.Read();
         }
     }
 
+    [DebuggerDisplay("({first}, {second})")]
+    public class Pair<T1, T2> : IComparable<Pair<T1, T2>>, IEquatable<Pair<T1, T2>>
+        where T1 : IComparable<T1>
+        where T2 : IComparable<T2>
+    {
+        public Pair(T1 first, T2 second)
+        {
+            this.first = first;
+            this.second = second;
+        }
+
+        public T1 first;
+        public T2 second;
+
+        public int CompareTo(Pair<T1, T2> other)
+        {
+            if (ReferenceEquals(this, other)) return 0;
+            if (ReferenceEquals(null, other)) return 1;
+            var firstComparison = first.CompareTo(other.first);
+            return firstComparison != 0 ? firstComparison : second.CompareTo(other.second);
+        }
+
+        public override string ToString() => $"({first}, {second})";
+
+        public bool Equals(Pair<T1, T2> other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return EqualityComparer<T1>.Default.Equals(first, other.first) &&
+                   EqualityComparer<T2>.Default.Equals(second, other.second);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == this.GetType() && Equals((Pair<T1, T2>) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (EqualityComparer<T1>.Default.GetHashCode(first) * 397) ^
+                       EqualityComparer<T2>.Default.GetHashCode(second);
+            }
+        }
+    }
+
+
     #endregion
 
     //ライブラリ置き場
-
-
-
+    
+    
+    
     //ライブラリ置き場ここまで
 
     public class Solver
@@ -975,10 +988,25 @@ namespace AtCoder
         private const int MOD = (int) 1e9 + 7,
             INF = 1000000010;
 
-        //解答
-        public void Solve()
+        public void Main()
         {
-        }
+            int N = ReadInt, M = ReadInt;
+            int[] A = IntArray(N);
+            int[] B = IntArray(M);
+            var ans = new int[1001];
+            for (int i = 0; i < M; i++)
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    if (A[j] <= B[i])
+                    {
+                        ans[j]++;
+                        break;
+                    }
+                }
+            }
+            Console.WriteLine(ans.Select(make_pair).MaxBy(x => x.first).First().second + 1);
 
+        }
     }
 }

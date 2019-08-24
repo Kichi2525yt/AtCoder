@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>AtCoder.Entry</StartupObject>
+    <StartupObject>Solve.Entry</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
