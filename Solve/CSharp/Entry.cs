@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AtCoder
+namespace Solve
 {
     public class Entry
     {
@@ -11,7 +11,7 @@ namespace AtCoder
             {
                 try
                 {
-                    new Solver().Solve();
+                    new Solver().Main();
                 }
                 catch (FormatException)
                 {
@@ -19,6 +19,7 @@ namespace AtCoder
                     Console.WriteLine("入力に失敗しました。");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
+                catch (ArgumentOutOfRangeException) { }
 
                 Console.WriteLine("---------------");
             }

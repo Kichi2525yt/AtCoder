@@ -1,191 +1,208 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Threading;
+using System.Numerics;
+using System.Text;
 using static System.Math;
-using AtCoder;
-using static AtCoder.Methods;
-// ReSharper disable LoopCanBeConvertedToQuery
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable MemberCanBeMadeStatic.Local
-// ReSharper disable PossibleNullReferenceException
-// ReSharper disable UnusedMember.Global
-// ReSharper disable UnusedMember.Local
-// ReSharper disable ArrangeTypeMemberModifiers
-// ReSharper disable SuggestVarOrType_BuiltInTypes
-// ReSharper disable SuggestVarOrType_Elsewhere
-// ReSharper disable InvertIf
-// ReSharper disable InconsistentNaming
-// ReSharper disable ConvertIfStatementToSwitchStatement
-// ReSharper disable UseObjectOrCollectionInitializer
-// ReSharper disable TailRecursiveCall
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable FunctionRecursiveOnAllPaths
+using static Solve.Input;
+using static Solve.Methods;
+using MethodImpl = System.Runtime.CompilerServices.MethodImplAttribute;
+using MethodImplOptions = System.Runtime.CompilerServices.MethodImplOptions;
 #pragma warning disable
 
-namespace Library
+namespace Solve.Library
 {
-
-    /// <summary>
-    /// Union-Find 木の集合を表します。
-    /// </summary>
-    [System.Diagnostics.DebuggerDisplay("Count of Parents = {" + nameof(ParentsCount) + "}")]
-    public class UnionFind
+    [DebuggerDisplay("Value = {" + nameof(_value) + "}")]
+    public struct ModInt : IEquatable<ModInt>, IComparable<ModInt>
     {
-        //親の場合は ( 集合のサイズ × -1 )
-        private readonly int[] _parent;
+        private long _value;
 
-        public UnionFind(int count)
+        public const int MOD = (int) 1e9 + 7;
+
+        public static readonly ModInt Zero = new ModInt(0);
+
+        public static readonly ModInt One = new ModInt(1);
+
+        public ModInt(long value)
         {
-            _parent = Enumerable.Repeat(-1, count).ToArray();
+            _value = value % MOD;
         }
 
-        /// <summary>すべての根を列挙します。</summary>
-        public IEnumerable<int> AllParents =>
-            _parent.Select(make_pair)
-                .Where(x => x.first < 0)
-                .Select(x => x.second);
-
-        private int ParentsCount => _parent.Count(x => x < 0);
-
-        /// <summary>xの木のサイズ(要素数)を返します。</summary>
-        public int Size(int x) => -_parent[Find(x)];
-
-        /// <summary>xの根を返します。</summary>
-        public int Find(int x) => _parent[x] < 0 ? x : _parent[x] = Find(_parent[x]);
-
-        /// <summary>xとyの木を併合します。</summary>
-        /// <returns>併合に成功したかどうか。(falseの場合は既に同じ木)</returns>
-        public bool Connect(int x, int y)
+        private ModInt(int value)
         {
-            int rx = Find(x), ry = Find(y);
-            if (rx == ry)
-                return false;
-            if (Size(rx) > Size(ry))
-                Swap(ref rx, ref ry);
-            _parent[rx] += _parent[ry];
-            _parent[ry] = rx;
-
-            return true;
+            _value = value;
         }
 
-        /// <summary>xとyの根が同じかどうかを返します。/summary>
-        public bool Same(int x, int y) => Find(x) == Find(y);
+        public int Value => (int) _value;
 
-        /// <summary>根とその根に所属する葉をグループ化して返します。</summary>
-        public ILookup<int, int> ToLookup()
-            => this.EnumeratePairs().ToLookup(x => x.Key, x => x.Value);
-        private IEnumerable<KeyValuePair<int, int>> EnumeratePairs()
+        public ModInt Invert => ModPow(this, MOD - 2);
+
+        public static ModInt operator -(ModInt value)
         {
-            for (int i = 0; i < _parent.Length; i++) yield return new KeyValuePair<int, int>(this.Find(i), i);
+            value._value = MOD - value._value;
+            return value;
+        }
+
+        public static ModInt operator +(ModInt left, ModInt right)
+        {
+            left._value += right._value;
+            if (left._value >= MOD) left._value -= MOD;
+            return left;
+        }
+
+        public static ModInt operator -(ModInt left, ModInt right)
+        {
+            left._value -= right._value;
+            if (left._value < 0) left._value += MOD;
+            return left;
+        }
+
+        public static ModInt operator *(ModInt left, ModInt right)
+        {
+            left._value = left._value * right._value % MOD;
+            return left;
+        }
+
+        public static ModInt operator /(ModInt left, ModInt right) => left * right.Invert;
+
+        public static ModInt operator ++(ModInt value)
+        {
+            if (value._value == MOD - 1) value._value = 0;
+            else value._value++;
+            return value;
+        }
+
+        public static ModInt operator --(ModInt value)
+        {
+            if (value._value == 0) value._value = MOD - 1;
+            else value._value--;
+            return value;
+        }
+
+        public static bool operator ==(ModInt left, ModInt right) => left.Equals(right);
+
+        public static bool operator !=(ModInt left, ModInt right) => !left.Equals(right);
+
+        public static implicit operator ModInt(int value) => new ModInt(value);
+
+        public static implicit operator ModInt(long value) => new ModInt(value);
+
+        public static ModInt ModPow(ModInt value, long exponent)
+        {
+            var r = new ModInt(1);
+            for (; exponent > 0; value *= value, exponent >>= 1)
+                if ((exponent & 1) == 1)
+                    r *= value;
+            return r;
+        }
+
+        public static ModInt ModFact(int value)
+        {
+            var r = new ModInt(1);
+            for (var i = 2; i <= value; i++) r *= value;
+            return r;
+        }
+
+        public bool Equals(ModInt other) => _value == other._value;
+
+        public override bool Equals(object obj)
+        {
+            return obj != null && this.Equals((ModInt) obj);
+        }
+
+        public override int GetHashCode() => _value.GetHashCode();
+
+        public override string ToString() => _value.ToString();
+
+        public int CompareTo(ModInt other)
+        {
+            return _value.CompareTo(other._value);
         }
     }
 
     /// <summary>
-    /// 優先度付きキュー
+    /// 比較可能なオブジェクトの優先順位付きのコレクションを表します。
     /// </summary>
-    /// <typeparam name="T">要素の型</typeparam>
-    [System.Diagnostics.DebuggerDisplay("Count = {_buffer.Count}")]
-    public class PriorityQueue<T>
-      where T : IComparable<T>
+    /// <typeparam name="T">キューの型</typeparam>
+    public class PriorityQueue<T> where T : IComparable<T>
     {
-        private readonly List<T> _buffer;
-        private readonly IComparer<T> _comparer;
-        public PriorityQueue()
+        public bool Any() => Count > 0;
+        public int Count { get; private set; }
+        private readonly bool Descendance;
+        private T[] data = new T[65536];
+        /// <summary>
+        /// PriorityQueue を初期化します。
+        /// </summary>
+        /// <param name="descendance">オブジェクトを大きい順で比較するか。</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public PriorityQueue(bool descendance = false) { Descendance = descendance; }
+        /// <summary>
+        /// キューの最小 (<see cref="Descendance"/> が true の場合は最大) の要素を取得します。
+        /// </summary>
+        ///<remarks>計算量: O(1)</remarks>
+        public T Top
         {
-            this._buffer = new List<T>();
-            _comparer = Comparer<T>.Default;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get { ValidateNonEmpty(); return data[1]; }
         }
-
-        public PriorityQueue(int capacity)
+        
+        /// <summary>
+        /// キューの最小 (<see cref="Descendance"/> が true の場合は最大) の要素を削除して返します。
+        /// </summary>
+        /// <remarks>計算量: O(log N)</remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T Pop()
         {
-            this._buffer = new List<T>(capacity);
-            _comparer = Comparer<T>.Default;
-        }
-
-        public PriorityQueue(int capacity, Comparison<T> comparison)
-        {
-            this._buffer = new List<T>(capacity);
-            _comparer = Comparer<T>.Create(comparison);
-        }
-
-        public PriorityQueue(Comparison<T> comparison)
-        {
-            this._buffer = new List<T>();
-            _comparer = Comparer<T>.Create(comparison);
-        }
-
-        static void PushHeap(IList<T> array, T elem, IComparer<T> comparer)
-        {
-            int n = array.Count;
-            array.Add(elem);
-
-            while (n != 0)
+            var top = Top;
+            var elem = data[Count--];
+            int index = 1;
+            while (true)
             {
-                int i = (n - 1) / 2;
-                if (comparer.Compare(array[n], array[i]) > 0)
+                if (index << 1 >= Count)
                 {
-                    var tmp = array[n];
-                    array[n] = array[i];
-                    array[i] = tmp;
+                    if (index << 1 > Count) break;
+                    if (elem.CompareTo(data[index << 1]) > 0 ^ Descendance) data[index] = data[index <<= 1];
+                    else break;
                 }
-                n = i;
+                else
+                {
+                    var nextIndex = data[index << 1].CompareTo(data[(index << 1) + 1]) <= 0 ^ Descendance ? index << 1 : (index << 1) + 1;
+                    if (elem.CompareTo(data[nextIndex]) > 0 ^ Descendance) data[index] = data[index = nextIndex];
+                    else break;
+                }
             }
+            data[index] = elem;
+            return top;
         }
-
-        static void PopHeap(IList<T> array, IComparer<T> comparer)
+        
+        /// <summary>
+        /// キューに要素を追加します。
+        /// </summary>
+        /// <param name="value">追加する要素</param>
+        /// <remarks>計算量 O(log N)</remarks>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Push(T value)
         {
-            int n = array.Count - 1;
-            array[0] = array[n];
-            array.RemoveAt(n);
-
-            for (int i = 0, j; (j = 2 * i + 1) < n;)
+            int index = ++Count;
+            if (data.Length == Count) Extend(data.Length * 2);
+            while (index >> 1 != 0)
             {
-                if (j != n - 1 && array[j].CompareTo(array[j + 1]) < 0)
-                    j++;
-                if (comparer.Compare(array[i], array[j]) < 0)
-                {
-                    var tmp = array[j];
-                    array[j] = array[i];
-                    array[i] = tmp;
-                }
-                i = j;
+                if (data[index >> 1].CompareTo(value) > 0 ^ Descendance) data[index] = data[index >>= 1];
+                else break;
             }
+            data[index] = value;
         }
-
-
-        /// <summary>
-        /// 要素のプッシュ。
-        /// </summary>
-        /// <param name="elem">挿入したい要素</param>
-        public void Push(T elem)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Extend(int newSize)
         {
-            PushHeap(this._buffer, elem, _comparer);
+            T[] newDatas = new T[newSize];
+            data.CopyTo(newDatas, 0);
+            data = newDatas;
         }
-
-        /// <summary>
-        /// 要素を1つポップ。
-        /// </summary>
-        /// <remarks>
-        /// 今回の実装では、先頭要素の読み出しと削除は別に行う。
-        /// この Pop では削除のみ。
-        /// 読み出しには Top プロパティを使う。
-        /// </remarks>
-        public void Pop()
-        {
-            PopHeap(this._buffer, _comparer);
-        }
-
-        /// <summary>
-        /// 先頭要素の読み出し。
-        /// </summary>
-        public T Top => this._buffer[0];
-
-        public int Count => this._buffer.Count;
+        private void ValidateNonEmpty() { if (Count == 0) throw new Exception(); }
     }
 
     /// <summary>
@@ -195,7 +212,7 @@ namespace Library
     public class SegmentTree<T> : IEnumerable<T>
     {
         private readonly int _treeHeight, _leafCount;
-        private readonly T _defaultValue;
+        private readonly T _measure;
         private readonly T[] _seg;
         private readonly Func<T, T, T> _f;
 
@@ -228,11 +245,11 @@ namespace Library
         /// <remarks>時間計算量 O(N)</remarks>
         /// <param name="elems">元の要素配列</param>
         /// <param name="operatorFunc">操作 (モノイド)</param>
-        /// <param name="defaultValue">モノイドの単位元</param>
-        public SegmentTree(IReadOnlyCollection<T> elems, Func<T, T, T> operatorFunc, T defaultValue = default(T))
+        /// <param name="measureValue">モノイドの単位元</param>
+        public SegmentTree(IReadOnlyCollection<T> elems, Func<T, T, T> operatorFunc, T measure = default(T))
         {
             this.Count = elems.Count;
-            _defaultValue = defaultValue;
+            _measure = measure;
             _f = operatorFunc;
 
             int treeHeight = 1, leafCount = 1;
@@ -245,9 +262,9 @@ namespace Library
             _treeHeight = treeHeight;
             _leafCount = leafCount;
 
-            _seg = Enumerable.Repeat(_defaultValue, _leafCount)
+            _seg = Enumerable.Repeat(_measure, _leafCount)
                 .Concat(elems)
-                .Concat(Enumerable.Repeat(_defaultValue, _leafCount - this.Count))
+                .Concat(Enumerable.Repeat(_measure, _leafCount - this.Count))
                 .ToArray();
             this.Build();
         }
@@ -258,9 +275,9 @@ namespace Library
         /// <remarks>すべての要素は <see cref="defaultValue"/> で初期化されます。時間計算量 O(N)</remarks>
         /// <param name="N">要素数</param>
         /// <param name="operatorFunc">操作 (モノイド)</param>
-        /// <param name="defaultValue">モノイドの単位元</param>
-        public SegmentTree(int N, Func<T, T, T> operatorFunc, T defaultValue = default(T))
-            : this(Enumerable.Repeat(defaultValue, N).ToArray(), operatorFunc, defaultValue) { }
+        /// <param name="measureValue">モノイドの単位元</param>
+        public SegmentTree(int N, Func<T, T, T> operatorFunc, T measure = default(T))
+            : this(Enumerable.Repeat(measure, N).ToArray(), operatorFunc, measure) { }
 
         /// <summary>
         /// <see cref="SegmentTree{T}"/> を構築します。
@@ -281,7 +298,7 @@ namespace Library
         /// <returns>指定した区間に対する二項演算の結果</returns>
         public T Query(int l, int r)
         {
-            T lValue = _defaultValue, rValue = _defaultValue;
+            T lValue = _measure, rValue = _measure;
             l += _leafCount;
             r += _leafCount - 1;
             while (l <= r)
@@ -295,6 +312,12 @@ namespace Library
             return _f(lValue, rValue);
         }
 
+        /// <summary>
+        /// 指定した区間 [l, r) にxを代入します。
+        /// </summary>
+        /// <param name="l"></param>
+        /// <param name="r"></param>
+        /// <param name="x"></param>
         public void Update(int l, int r, T x)
         {
             l += _leafCount;
@@ -319,7 +342,7 @@ namespace Library
 
     //実装途中
     [Obsolete]
-    class MultiSet<T> : ICollection<T>
+    public class MultiSet<T> : ICollection<T>
     {
         private SortedDictionary<T, int> _dict;
 
@@ -393,14 +416,16 @@ namespace Library
         public bool IsReadOnly { get; }
     }
 
-    //階乗・組み合わせ（nCr）・順列（nPr）関連
-    public struct Fact
+    //階乗・組み合わせ（nCr / nHr）・順列（nPr）関連
+    public class Fact
     {
         //i!
         private readonly int[] _fact;
         //i!^-1
         private readonly int[] _inv;
 
+        public Fact() : this(200010) {}
+        
         /// <summary>
         /// 1以上N以下の階乗を計算します。
         /// </summary>
@@ -436,7 +461,7 @@ namespace Library
         public int nCr(int n, int r)
         {
             if (n - r < 0) return 0;
-            if (n >= _fact.Length) throw new ArgumentOutOfRangeException(nameof(n), "Fact 構造体のインスタンスをn以上で初期化している必要があります。");
+            if (n >= _fact.Length) throw new ArgumentOutOfRangeException(nameof(n), "Fact クラスのインスタンスをn以上で初期化している必要があります。");
             var ret = ModInt.One;
             // n! / (n-r)!r!
 
@@ -448,13 +473,25 @@ namespace Library
         }
 
         /// <summary>
+        /// 重複組み合せの数 nHr を求めます。
+        /// </summary>
+        /// <remarks>N以上の数で初期化している必要があります。</remarks>
+        public int nHr(int n, int r)
+        {
+            n = r + n - 1;
+            if (n - r < 0) return 0;
+            if (n >= _fact.Length) throw new ArgumentOutOfRangeException(nameof(n), "Fact クラスのインスタンスをn + rより大きな数で初期化している必要があります。");
+            return nCr(n, r);
+        }
+
+        /// <summary>
         /// 順列の数 nPr を求めます。
         /// </summary>
         /// <remarks>N以上の数で初期化している必要があります。</remarks>
         public int nPr(int n, int r)
         {
             if (n - r < 0) return 0;
-            if (n >= _fact.Length) throw new ArgumentOutOfRangeException(nameof(n), "Fact 構造体のインスタンスをn以上で初期化している必要があります。");
+            if (n >= _fact.Length) throw new ArgumentOutOfRangeException(nameof(n), "Fact クラスのインスタンスをn以上で初期化している必要があります。");
             var ret = ModInt.One;
             // n! / (n-r)!r!
 
@@ -465,6 +502,141 @@ namespace Library
         }
     }
 
+    /// <summary>
+    /// Union-Find 木の集合を表します。
+    /// </summary>
+    [System.Diagnostics.DebuggerDisplay("Count of Parents = {" + nameof(ParentsCount) + "}")]
+    public class UnionFind
+    {
+        //親の場合は ( 集合のサイズ × -1 )
+        private readonly int[] _parent;
+
+        public UnionFind(int count)
+        {
+            _parent = Enumerable.Repeat(-1, count).ToArray();
+        }
+
+        /// <summary>すべての根を列挙します。</summary>
+        public IEnumerable<int> AllParents =>
+            _parent.Select(make_pair)
+                .Where(x => x.first < 0)
+                .Select(x => x.second);
+
+        private int ParentsCount => _parent.Count(x => x < 0);
+
+        /// <summary>xの木のサイズ(要素数)を返します。</summary>
+        public int Size(int x) => -_parent[Find(x)];
+
+        /// <summary>xの根を返します。</summary>
+        public int Find(int x) => _parent[x] < 0 ? x : _parent[x] = Find(_parent[x]);
+
+        /// <summary>xとyの木を併合します。</summary>
+        /// <returns>併合に成功したかどうか。(falseの場合は既に同じ木)</returns>
+        public bool Connect(int x, int y)
+        {
+            int rx = Find(x), ry = Find(y);
+            if (rx == ry)
+                return false;
+            if (Size(rx) > Size(ry))
+                Swap(ref rx, ref ry);
+            _parent[rx] += _parent[ry];
+            _parent[ry] = rx;
+
+            return true;
+        }
+
+        /// <summary>xとyの根が同じかどうかを返します。/summary>
+        public bool Same(int x, int y) => Find(x) == Find(y);
+
+        /// <summary>根とその根に所属する葉をグループ化して返します。</summary>
+        public ILookup<int, int> ToLookup()
+            => this.EnumeratePairs().ToLookup(x => x.Key, x => x.Value);
+        private IEnumerable<KeyValuePair<int, int>> EnumeratePairs()
+        {
+            for (int i = 0; i < _parent.Length; i++) yield return new KeyValuePair<int, int>(this.Find(i), i);
+        }
+    }
+
+    
+    public class Dijkstra
+    {
+        public struct Node : IComparable<Node>
+        {
+            public Node(int num, int from, int cost)
+            {
+                this.Number = num;
+                this.from = from;
+                this.cost = cost;
+                To = new List<Pair<int, int>>();
+            }
+            public readonly int Number;
+            public int from, cost;
+            public List<Pair<int, int>> To;
+
+            public static bool operator >(Node a, Node b)
+            {
+                return a.cost > b.cost;
+            }
+            public static bool operator <(Node a, Node b)
+            {
+                return a.cost < b.cost;
+            }
+
+            public int CompareTo(Node other)
+            {
+                return cost.CompareTo(other.cost);
+            }
+        }
+        
+        private const int INF = (int) 1e9 + 7;
+        private PriorityQueue<Node> _que;
+        public readonly Node[] Nodes;
+
+        public Dijkstra(int N)
+        {
+            Nodes = new Node[N];
+            for (int i = 0; i < N; i++)
+            {
+                Nodes[i] = new Node(i, i, INF);
+            }
+        }
+
+        public void Add(int start, int end, int cost)
+        {
+            Nodes[start].To.Add(make_pair(end, cost));
+        }
+
+        public Tuple<int, Node[]> Run(int start, int end, int firstCost = 0)
+        {
+            _que = new PriorityQueue<Node>();
+            var node = Nodes.Select(x => new Node(x.Number, x.from, x.cost) {To = x.To.ToList()}).ToArray();
+            node[start].cost = firstCost;
+
+            foreach (var t in node[start].To)
+            {
+                node[t.first].cost = t.second + node[start].cost;
+                node[t.first].@from = start;
+                _que.Push(node[t.first]);
+            }
+
+            while (_que.Any())
+            {
+                var next = _que.Pop();
+                if (next.cost > node[next.Number].cost) continue;
+                foreach (var t in next.To
+                    .Where(t => node[t.first].cost > next.cost + t.second))
+                {
+                    node[t.first].cost = next.cost + t.second;
+                    node[t.first].@from = next.Number;
+                    _que.Push(node[t.first]);
+                }
+            }
+
+            return Tuple.Create(node[end].cost, node);
+        }
+
+    }
+    
     /// <summary>
     /// 最小全域木を求めるアルゴリズムです。
     /// </summary>
@@ -614,19 +786,19 @@ namespace Library
         {
             get
             {
-                if (!this.Built)
+                if (!Built)
                     throw new InvalidOperationException("構築後に取得する必要があります。");
-                if (!a.IsIn(0, N)) throw new ArgumentOutOfRangeException($"引数 {nameof(a)} は 0 以上 N 未満である必要があります。");
-                if (!b.IsIn(0, N)) throw new ArgumentOutOfRangeException($"引数 {nameof(b)} は 0 以上 N 未満である必要があります。");
+                if (!a.IsIn(0, N)) throw new ArgumentOutOfRangeException(nameof(a),$"引数 {nameof(a)} は 0 以上 N 未満である必要があります。");
+                if (!b.IsIn(0, N)) throw new ArgumentOutOfRangeException(nameof(b),$"引数 {nameof(b)} は 0 以上 N 未満である必要があります。");
                 return _costs[a][b];
             }
 
             set
             {
-                if (this.Built)
+                if (Built)
                     throw new InvalidOperationException("構築後に値を変更することはできません。");
-                if (!a.IsIn(0, N)) throw new ArgumentOutOfRangeException($"引数 {nameof(a)} は 0 以上 N 未満である必要があります。");
-                if (!b.IsIn(0, N)) throw new ArgumentOutOfRangeException($"引数 {nameof(b)} は 0 以上 N 未満である必要があります。");
+                if (!a.IsIn(0, N)) throw new ArgumentOutOfRangeException(nameof(a), $"引数 {nameof(a)} は 0 以上 N 未満である必要があります。");
+                if (!b.IsIn(0, N)) throw new ArgumentOutOfRangeException(nameof(b), $"引数 {nameof(b)} は 0 以上 N 未満である必要があります。");
                 _costs[a][b] = value;
             }
         }
@@ -1151,4 +1323,85 @@ namespace Library
 
 
 
+    /// <summary>
+    /// 根付き木を表します。
+    /// </summary>
+    /*public class RootedTree
+    {
+        public struct Edge
+        {
+            public Edge(int from, int to)
+            {
+                From = from;
+                To = to;
+            }
+            public int From { get; }
+            public int To { get; }
+        }
+        /// <summary>
+        /// <see cref="RootedTree"/> が初期化されているかを取得します。
+        /// </summary>
+        public bool Initialized { get; private set; }
+        private int _vertexCount, _root, _graphDepth;
+        private List<int> _depth;
+        private List<List<int>> _parents;
+        private List<List<Edge>> _graph;
+
+        /// <summary>
+        /// <see cref="RootedTree"/> クラスを初期化します。
+        /// </summary>
+        /// <param name="n">頂点の数</param>
+        public RootedTree(int n)
+        {
+            _vertexCount = n;
+            _depth = new List<int>(n);
+            _graph = new List<List<Edge>>(n);
+            for (int i = 0; i < n; i++)
+                _graph = new List<List<Edge>>();
+            _graphDepth = 0;
+            while (1 << _graphDepth < n) _graphDepth++;
+            _parents = new List<List<int>>(_graphDepth);
+            for (int i = 0; i < _graphDepth; i++)
+            {
+                _parents[i] = Enumerable.Repeat(n, n+1).ToList();
+            }
+        }
+
+        /// <summary>
+        /// <see cref="Tree"/> に辺を追加します。
+        /// </summary>
+        /// <param name="e">追加する辺</param>
+        /// <param name="directed">有向かどうか</param>
+        public void AddEdge(Edge e, bool directed = false)
+        {
+            _graph[e.From].Add(e);
+            if (!directed)
+                _graph[e.To].Add(new Edge(e.To, e.From));
+        }
+
+        /// <summary>
+        /// <see cref="Tree"/> に辺を追加します。
+        /// </summary>
+        /// <param name="from">辺の始点</param>
+        /// <param name="to">辺の終点</param>
+        /// <param name="directed">有向かどうか</param>
+        public void AddEdge(int from, int to, bool directed) => AddEdge(new Edge(from, to), directed);
+
+        /// <summary>
+        /// <see cref="RootedTree"/> 木を実装します。
+        /// </summary>
+        /// <param name="r">根の頂点</param>
+        public void Initialize(int r = 0)
+        {
+            _root = r;
+            dfs(r);
+            for (int i = 0; i < _graphDepth - 1; i++)
+            {
+                for (int j = 0; j < _vertexCount; j++)
+                {
+                    _parents[i + 1][j] = _parents[i][_parents[i][j]];
+                }
+            }
+        }
+    }*/
 }
