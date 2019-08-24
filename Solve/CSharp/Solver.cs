@@ -1,25 +1,4 @@
-﻿// ReSharper disable RedundantUsingDirective
-// ReSharper disable JoinDeclarationAndInitializer
-// ReSharper disable MemberCanBeMadeStatic.Local
-// ReSharper disable PossibleNullReferenceException
-// ReSharper disable ArrangeTypeMemberModifiers
-// ReSharper disable SuggestVarOrType_BuiltInTypes
-// ReSharper disable SuggestVarOrType_Elsewhere
-// ReSharper disable InvertIf
-// ReSharper disable InconsistentNaming
-// ReSharper disable ConvertIfStatementToSwitchStatement
-// ReSharper disable UseObjectOrCollectionInitializer
-// ReSharper disable TailRecursiveCall
-// ReSharper disable RedundantUsingDirective
-// ReSharper disable InlineOutVariableDeclaration
-// ReSharper disable FunctionRecursiveOnAllPaths
-// ReSharper disable UnusedMember.Global
-// ReSharper disable MemberCanBeMadeStatic.Global
-// ReSharper disable UnusedMember.Local
-// ReSharper disable NonReadonlyMemberInGetHashCode
-// ReSharper disable CheckNamespace
-#pragma warning disable
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,13 +7,47 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using static System.Math;
-using static AtCoder.Input;
-using static AtCoder.Methods;
+using static Solve.Input;
+using static Solve.Output;
+using static Solve.Methods;
 using MethodImpl = System.Runtime.CompilerServices.MethodImplAttribute;
 using MethodImplOptions = System.Runtime.CompilerServices.MethodImplOptions;
+using pii = Solve.Pair<int, int>;
+using pll = Solve.Pair<long, long>;
+using pli = Solve.Pair<long, int>;
+using pil = Solve.Pair<int, long>;
+using pss = Solve.Pair<string, string>;
+using psi = Solve.Pair<string, int>;
+using vint = Solve.vector<int>;
+using vlong = Solve.vector<long>;
+using vstr = Solve.vector<string>;
+using vii = Solve.vector<Solve.Pair<int, int>>;
+using vll = Solve.vector<Solve.Pair<long, long>>;
+using vli = Solve.vector<Solve.Pair<long, int>>;
+using vil = Solve.vector<Solve.Pair<int, long>>;
 
-namespace AtCoder
+namespace Solve
 {
+    //ライブラリ置き場
+    
+    
+    
+    //ライブラリ置き場ここまで
+
+    public class Solver
+    {
+        public void Main()
+        {
+            
+            
+            
+        }
+
+
+        // ReSharper disable UnusedMember.Local
+        private const int MOD = (int) 1e9 + 7, INF = 1000000010;
+    }
+    
     #region Templete
 
 #if !LOCAL
@@ -46,7 +59,7 @@ namespace Library { }
 
         public static readonly int[] dy = {0, 1, -1, 0};
 
-        [System.Runtime.CompilerServices.MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Assert(bool b, string message = null)
         {
             if (!b) throw new Exception(message ?? "Assert failed.");
@@ -57,20 +70,9 @@ namespace Library { }
             where T : IComparable<T> 
             => (a, b) => b.CompareTo(a);
         */
-        public static void Print<T>(T t) => Console.WriteLine(t);
-        public static void Print(params object[] o) => Console.WriteLine(o.Join(" "));
 
-        public static void PrintBool(bool val, string yes = "Yes", string no = "No")
-            => Console.WriteLine(val ? yes : no);
-
-        public static void PrintYn(bool val) => PrintBool(val);
-        public static void PrintYN(bool val) => PrintBool(val, "YES", "NO");
-        public static void PrintPossible(bool val) => PrintBool(val, "Possible", "Impossible");
-        public static void PrintYay(bool val) => PrintBool(val, "Yay!", ":(");
-
-        public static void PrintDebug(params object[] args)
-            => Console.Error.WriteLine(string.Join(" ", args));
-
+        public static string JoinSpace<T>(this IEnumerable<T> source) => source.Join(" ");
+        public static string JoinEndline<T>(this IEnumerable<T> source) => source.Join("\n");
         public static string Join<T>(this IEnumerable<T> source, string s) => string.Join(s, source);
         public static string Join<T>(this IEnumerable<T> source, char c) => string.Join(c.ToString(), source);
 
@@ -99,8 +101,14 @@ namespace Library { }
         /// <returns>aとbの最大公約数</returns>
         public static long Gcd(long a, long b)
         {
-            if (a < b) Swap(ref a, ref b);
-            return a % b == 0 ? b : Gcd(b, a % b);
+            while (true)
+            {
+                if (a < b) Swap(ref a, ref b);
+                if (a % b == 0) return b;
+                var x = a;
+                a = b;
+                b = x % b;
+            }
         }
 
         /// <summary>aとbの最小公倍数を求めます。</summary>
@@ -143,7 +151,7 @@ namespace Library { }
         /// mod pにおけるaの逆元を求めます。
         /// </summary>
         /// <param name="a"></param>
-        /// <param name="mod">法</param>
+        /// <param name="p">法</param>
         /// <returns></returns>
         public static long ModInv(long a, long p)
             => PowMod(a, p - 2, p);
@@ -289,10 +297,10 @@ namespace Library { }
         public static IEnumerable<TSource> WhereNotNull<TSource>(this IEnumerable<TSource> source)
             => source.Where(val => val != null);
 
-        [System.Runtime.CompilerServices.MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static T[] ArrayOf<T>(params T[] arr) => arr;
 
-        [System.Runtime.CompilerServices.MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static List<T> ListOf<T>(params T[] arr) => new List<T>(arr);
 
         public static IList<TSource> MaxBy<TSource, TKey>(this IEnumerable<TSource> source,
@@ -654,6 +662,8 @@ namespace Library { }
 
             return ret;
         }
+
+        public static vector<T> ToVector<T>(IEnumerable<T> source) => new vector<T>(source);
     }
 
     public static class Input
@@ -912,6 +922,58 @@ namespace Library { }
         }
     }
 
+    public static class Output
+    {
+        public static void print<T>(T t) => Console.WriteLine(t);
+        public static void print(params object[] o) => Console.WriteLine(o.Join(" "));
+
+        public static void PrintBool(bool val, string yes = "Yes", string no = "No")
+            => Console.WriteLine(val ? yes : no);
+        public static void PrintYn(bool val) => PrintBool(val);
+        public static void PrintYN(bool val) => PrintBool(val, "YES", "NO");
+        public static void PrintPossible(bool val) => PrintBool(val, "Possible", "Impossible");
+        public static void PrintYay(bool val) => PrintBool(val, "Yay!", ":(");
+        public static void PrintDebug(params object[] args)
+            => Console.Error.WriteLine(string.Join(" ", args));
+        
+        /// <summary>
+        /// setter で設定された値を標準出力に出力します。
+        /// </summary>
+        public static object cout
+        {
+            set
+            {
+                Console.WriteLine(value);
+            }
+        }
+
+        /// <summary>
+        /// Local環境のみ，setter で設定された値を標準出力に出力します。
+        /// </summary>
+        public static object dout
+        {
+            set
+            {
+                #if LOCAL
+                Console.WriteLine(value);
+                #endif
+            }
+        }
+        
+        /// <summary>
+        /// setter で設定された値を標準エラー出力に出力します。
+        /// </summary>
+        public static object cerr
+        {
+            set
+            {
+                Console.Error.WriteLine(value);
+            }
+        }
+
+        public const string endl = "\n";
+    }
+
     public class Program
     {
         public static void Main(string[] args)
@@ -974,39 +1036,52 @@ namespace Library { }
         }
     }
 
-
-    #endregion
-
-    //ライブラリ置き場
-    
-    
-    
-    //ライブラリ置き場ここまで
-
-    public class Solver
+    public class vector<T> : IEnumerable<T>
     {
-        private const int MOD = (int) 1e9 + 7,
-            INF = 1000000010;
+        private List<T> _list;
 
-        public void Main()
+        public vector() : this(0)
         {
-            int N = ReadInt, M = ReadInt;
-            int[] A = IntArray(N);
-            int[] B = IntArray(M);
-            var ans = new int[1001];
-            for (int i = 0; i < M; i++)
-            {
-                for (int j = 0; j < N; j++)
-                {
-                    if (A[j] <= B[i])
-                    {
-                        ans[j]++;
-                        break;
-                    }
-                }
-            }
-            Console.WriteLine(ans.Select(make_pair).MaxBy(x => x.first).First().second + 1);
-
         }
+
+        public vector(int n, T value = default(T))
+        {
+            _list = new List<T>(n);
+            for(int i = 0; i < n; i++) _list.Add(value);
+        }
+        public vector(IEnumerable<T> x)
+        {
+            _list = new List<T>();
+            _list.AddRange(x);
+        }
+        public void Add(T value)
+        {
+            _list.Add(value);
+        }
+        public void PushBack(T value) => Add(value);
+        public void Resize(int newsize)
+        {
+            var newList = new List<T>(newsize);
+            newList.AddRange(_list);
+            for(int i = 0; i < newsize - newList.Count; i++)
+                newList.Add(default(T));
+            _list = newList;
+        }
+        public T this[int index] => _list[index];
+        public T At(int index) => this[index];
+        public void PopBack() => _list.RemoveAt(_list.Count - 1);
+        public void Insert(int position, T value) => _list.Insert(position, value);
+        public void Erase(int position) => _list.RemoveAt(position);
+        public void Erase(int first, int last) => _list.RemoveRange(first, last - first);
+        public void Reserve(int capacity) => _list.Capacity = capacity;
+        public void ShrinkToFit() => _list.Capacity = _list.Count;
+        public IEnumerator<T> GetEnumerator() => _list.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public static implicit operator vector<T>(T[] array) => new vector<T>(array);
+        public static implicit operator vector<T>(List<T> list) => new vector<T>(list);
     }
+    
+    #endregion
+    
 }
+ 
