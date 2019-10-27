@@ -2,48 +2,67 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Numerics;
 using System.Text;
+using System.Windows.Markup;
 using static System.Math;
-using static Solve.Methods;
 using static Solve.Input;
 using static Solve.Output;
+using static Solve.Methods;
+using MethodImpl = System.Runtime.CompilerServices.MethodImplAttribute;
+using MethodImplOptions = System.Runtime.CompilerServices.MethodImplOptions;
 using pii = Solve.Pair<int, int>;
 using pll = Solve.Pair<long, long>;
 using pli = Solve.Pair<long, int>;
 using pil = Solve.Pair<int, long>;
 using pss = Solve.Pair<string, string>;
 using psi = Solve.Pair<string, int>;
-using vint = Solve.vector<int>;
-using vlong = Solve.vector<long>;
-using vstr = Solve.vector<string>;
-using vii = Solve.vector<Solve.Pair<int, int>>;
-using vll = Solve.vector<Solve.Pair<long, long>>;
-using vli = Solve.vector<Solve.Pair<long, int>>;
-using vil = Solve.vector<Solve.Pair<int, long>>;
 
 namespace Solve
 {
     public class Solver
     {
+        public const string FILE = "example_01.txt";
+        public Stopwatch stopwatch;
+        
+        public void Solve()
+        {
+            stopwatch = new Stopwatch();
+        }
+
         public void Main()
         {
-        
+            stopwatch = Stopwatch.StartNew();
+            Input();
+            Solve();
+            Output();
+            var rand = new Random();
+            var sw = new StreamWriter("out.txt");
+            int N = 1000;
+            sw.WriteLine(N);
+            for (int i = 0; i < N; i++)
+            {
+                var a = Range(N).Select(x=>++x).OrderBy(x=>rand.Next()).ToList();
+                a.Remove(i);
+                sw.WriteLine(a.JoinSpace());
+            }
+            sw.Dispose();
+            Process.Start("out.txt");
         }
         
+        public void Input()
+        {
+        }
+        
+        public void Output()
+        {
+        }
         // ReSharper disable UnusedMember.Local
         private const int MOD = (int) 1e9 + 7, INF = 1000000010;
     }
     
-    //ライブラリ置き場
-    
-    
-    
-    //ライブラリ置き場ここまで
-
     #region Templete
 
 #if !LOCAL
@@ -55,7 +74,7 @@ namespace Library { }
 
         public static readonly int[] dy = {0, 1, -1, 0};
 
-        [System.Runtime.CompilerServices.MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Assert(bool b, string message = null)
         {
             if (!b) throw new Exception(message ?? "Assert failed.");
@@ -299,6 +318,75 @@ namespace Library { }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static List<T> ListOf<T>(params T[] arr) => new List<T>(arr);
 
+        public static IList<TSource> MaxBy<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+            return MaxBy(source, keySelector, Comparer<TKey>.Default);
+        }
+
+        public static IList<TSource> MaxBy<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
+            return ExtremaBy(source, keySelector, comparer.Compare);
+        }
+
+        public static IList<TSource> MinBy<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+            return MinBy(source, keySelector, Comparer<TKey>.Default);
+        }
+
+        public static IList<TSource> MinBy<TSource, TKey>(this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector, IComparer<TKey> comparer)
+        {
+            if (source == null) throw new ArgumentNullException(nameof(source));
+            if (keySelector == null) throw new ArgumentNullException(nameof(keySelector));
+            if (comparer == null) throw new ArgumentNullException(nameof(comparer));
+            return ExtremaBy(source, keySelector, (key, minValue) => -comparer.Compare(key, minValue));
+        }
+
+        private static IList<TSource> ExtremaBy<TSource, TKey>(IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector, Func<TKey, TKey, int> compare)
+        {
+            var result = new List<TSource>();
+
+            using (var e = source.GetEnumerator())
+            {
+                if (!e.MoveNext())
+                    throw new InvalidOperationException("シーケンスに要素がありませんでした。");
+
+                var current = e.Current;
+                var resKey = keySelector(current);
+                result.Add(current);
+
+                while (e.MoveNext())
+                {
+                    var cur = e.Current;
+                    var key = keySelector(cur);
+
+                    var cmp = compare(key, resKey);
+                    if (cmp == 0)
+                    {
+                        result.Add(cur);
+                    }
+                    else if (cmp > 0)
+                    {
+                        result = new List<TSource> {cur};
+                        resKey = key;
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public static IEnumerable<TResult> Repeat<TResult>(TResult value)
         {
             while (true) yield return value;
@@ -308,7 +396,7 @@ namespace Library { }
         public static IEnumerable<TResult> Repeat<TResult>(TResult value, int count)
             => Enumerable.Repeat(value, count);
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         public static IEnumerable<TResult> Repeat<TResult>(this IEnumerable<TResult> source, int count)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
@@ -318,7 +406,7 @@ namespace Library { }
                     yield return v;
         }
 
-        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         public static IEnumerable<TResult> Repeat<TResult>(this IEnumerable<TResult> source)
         {
             if (source == null) throw new ArgumentNullException(nameof(source));
@@ -409,6 +497,99 @@ namespace Library { }
         /// <returns>範囲の結果</returns>
         public static IEnumerable<int> RangeReverse(int end) => RangeReverse(0, end);
 
+        /// <summary>
+        /// valueを素因数分解し、素因数を列挙します。
+        /// </summary>
+        /// <param name="value">素因数分解する値</param>
+        /// <returns>素因数の集合</returns>
+        public static IEnumerable<int> Factorize(int value)
+        {
+            int first = value;
+            for (int i = 2; i * i < first; i++)
+            {
+                while (value % i == 0)
+                {
+                    value /= i;
+                    yield return i;
+                }
+            }
+
+            if (value > 1)
+                yield return value;
+        }
+
+        /// <summary>
+        /// valueを素因数分解し、素因数を列挙します。
+        /// </summary>
+        /// <param name="value">素因数分解する値</param>
+        /// <returns>素因数の集合</returns>
+        public static IEnumerable<long> Factorize(long value)
+        {
+            long first = value;
+            for (long i = 2; i * i < first; i++)
+            {
+                while (value % i == 0)
+                {
+                    value /= i;
+                    yield return i;
+                }
+            }
+
+            if (value > 1)
+                yield return value;
+        }
+
+        /// <summary>
+        /// valueを素因数分解し、素因数とその個数の連想配列を返します。
+        /// </summary>
+        /// <param name="value">素因数分解する値</param>
+        /// <returns>素因数の連想配列</returns>
+        public static Dictionary<long, int> FactorizeAsMap(long value)
+        {
+            var dict = new Dictionary<long, int>();
+            long first = value;
+            for (int i = 2; i * i < first; i++)
+            {
+                if (value % i > 0) continue;
+                int cnt = 0;
+                while (value % i == 0)
+                {
+                    value /= i;
+                    cnt++;
+                }
+
+                dict.Add(i, cnt);
+            }
+
+            if (value > 1) dict.Add(value, 1);
+            return dict;
+        }
+
+        /// <summary>
+        /// valueを素因数分解し、素因数とその個数の連想配列を返します。
+        /// </summary>
+        /// <param name="value">素因数分解する値</param>
+        /// <returns>素因数の連想配列</returns>
+        public static Dictionary<int, int> FactorizeAsMap(int value)
+        {
+            var dict = new Dictionary<int, int>();
+            int first = value;
+            for (int i = 2; i * i < first; i++)
+            {
+                if (value % i > 0) continue;
+                int cnt = 0;
+                while (value % i == 0)
+                {
+                    value /= i;
+                    cnt++;
+                }
+
+                dict.Add(i, cnt);
+            }
+
+            if (value > 1) dict.Add(value, 1);
+            return dict;
+        }
 
         /// <summary>
         /// 指定した配列をコピーして昇順ソートします。（非破壊的）
@@ -437,6 +618,17 @@ namespace Library { }
             Array.Sort(array);
             Array.Reverse(array);
             return array;
+        }
+
+        /// <summary>
+        /// valueの約数の個数を求めます。
+        /// </summary>
+        /// <param name="value">約数の個数を求める数</param>
+        /// <returns>valueの約数の個数</returns>
+        public static long Divisors(long value)
+        {
+            var fact = FactorizeAsMap(value);
+            return fact.Select(x => x.Value + 1L).Aggregate((m, x) => m * x);
         }
 
         public static double Log2(double x) => Log(x, 2);
@@ -485,8 +677,6 @@ namespace Library { }
 
             return ret;
         }
-
-        public static vector<T> ToVector<T>(this IEnumerable<T> source) => new vector<T>(source);
     }
 
     public static class Input
@@ -495,7 +685,7 @@ namespace Library { }
         private static readonly Queue<string> _input = new Queue<string>();
         private static readonly StreamReader sr =
 #if FILE
-            new StreamReader("in.txt");
+            new StreamReader(Solver.FILE);
 #else
             new StreamReader(Console.OpenStandardInput());
 #endif
@@ -859,66 +1049,7 @@ namespace Library { }
         }
     }
 
-    [DebuggerDisplay("Size = {" + nameof(Size) + "}")]
-    public class vector<T> : IEnumerable<T>
-    {
-        private List<T> _list;
-        private IEnumerator<T> _enumeratorImplementation;
-
-        public vector() : this(0)
-        {
-        }
-
-        public vector(int n, T value = default(T))
-        {
-            _list = new List<T>(n);
-            for (int i = 0; i < n; i++) _list.Add(value);
-            _enumeratorImplementation = _list.GetEnumerator();
-        }
-
-        public vector(IEnumerable<T> x)
-        {
-            _list = new List<T>();
-            _list.AddRange(x);
-            _enumeratorImplementation = _list.GetEnumerator();
-        }
-
-        public void Add(T value)
-        {
-            _list.Add(value);
-        }
-
-        public void PushBack(T value) => Add(value);
-
-        public void Resize(int newsize)
-        {
-            var newList = new List<T>(newsize);
-            newList.AddRange(_list);
-            for (int i = 0; i < newsize - newList.Count; i++)
-                newList.Add(default(T));
-            _list = newList;
-            _enumeratorImplementation = _list.GetEnumerator();
-        }
-
-        public T this[int index]
-        {
-            get { return _list[index]; }
-            set { _list[index] = value; }
-        }
-
-        public T At(int index) => this[index];
-        public void PopBack() => _list.RemoveAt(_list.Count - 1);
-        public void Insert(int position, T value) => _list.Insert(position, value);
-        public void Erase(int position) => _list.RemoveAt(position);
-        public void Erase(int first, int last) => _list.RemoveRange(first, last - first);
-        public void Reserve(int capacity) => _list.Capacity = capacity;
-        public void ShrinkToFit() => _list.Capacity = _list.Count;
-        public int Size => _list.Count;
-        public IEnumerator<T> GetEnumerator() => _list.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public static implicit operator vector<T>(T[] array) => new vector<T>(array);
-        public static implicit operator vector<T>(List<T> list) => new vector<T>(list);
-    }
-    
     #endregion
+    
 }
+ 
