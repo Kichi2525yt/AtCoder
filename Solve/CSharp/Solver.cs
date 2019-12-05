@@ -17,13 +17,18 @@ using pli = Solve.Pair<long, int>;
 using pil = Solve.Pair<int, long>;
 using pss = Solve.Pair<string, string>;
 using psi = Solve.Pair<string, int>;
-using vint = Solve.vector<int>;
-using vlong = Solve.vector<long>;
-using vstr = Solve.vector<string>;
-using vii = Solve.vector<Solve.Pair<int, int>>;
-using vll = Solve.vector<Solve.Pair<long, long>>;
-using vli = Solve.vector<Solve.Pair<long, int>>;
-using vil = Solve.vector<Solve.Pair<int, long>>;
+using lint = System.Collections.Generic.List<int>;
+using llong = System.Collections.Generic.List<long>;
+using lstr = System.Collections.Generic.List<string>;
+using llint = System.Collections.Generic.List<System.Collections.Generic.List<int>>;
+using llstr = System.Collections.Generic.List<System.Collections.Generic.List<long>>;
+using lllong = System.Collections.Generic.List<System.Collections.Generic.List<string>>;
+using lii = System.Collections.Generic.List<Solve.Pair<int, int>>;
+using lll = System.Collections.Generic.List<Solve.Pair<long, long>>;
+using lli = System.Collections.Generic.List<Solve.Pair<long, int>>;
+using lil = System.Collections.Generic.List<Solve.Pair<int, long>>;
+using ll = System.Int64;
+
 
 namespace Solve
 {
@@ -31,18 +36,24 @@ namespace Solve
     {
         public void Main()
         {
-        
+            
+            
+            
         }
-        
+
+
         // ReSharper disable UnusedMember.Local
-        private const int MOD = (int) 1e9 + 7, INF = 1000000010;
+        private const int MOD = (int) 1e9 + 7,
+            INF = 1000000010;
+
+        private const long LINF = 1000000000000000100;
     }
+
+    // ライブラリ置き場ここから
+
     
-    //ライブラリ置き場
-    
-    
-    
-    //ライブラリ置き場ここまで
+
+    // ライブラリ置き場ここまで
 
     #region Templete
 
@@ -52,10 +63,9 @@ namespace Library { }
     public static class Methods
     {
         public static readonly int[] dx = {-1, 0, 0, 1};
-
         public static readonly int[] dy = {0, 1, -1, 0};
 
-        [System.Runtime.CompilerServices.MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Assert(bool b, string message = null)
         {
             if (!b) throw new Exception(message ?? "Assert failed.");
@@ -85,7 +95,7 @@ namespace Library { }
             where T2 : IComparable<T2>
             => new Pair<T1, T2>(first, second);
 
-        /// <summary>aとbをスワップします。に</summary>
+        /// <summary>aとbをスワップします。</summary>
         public static void Swap<T>(ref T a, ref T b) where T : struct
         {
             var tmp = b;
@@ -196,12 +206,12 @@ namespace Library { }
         /// <param name="high">検索する数値の最大値</param>
         /// <param name="expression">条件</param>
         /// <returns>条件を満たす最小の数値</returns>
-        public static int BinarySearch(int low, int high, Func<int, bool> expression)
+        public static long BinarySearch(long low, long high, Func<long, bool> expression)
         {
             while (low < high)
             {
-                int middle = (high - low) / 2 + low;
-                if (expression(middle))
+                long middle = (high - low) / 2 + low;
+                if (!expression(middle))
                     high = middle;
                 else
                     low = middle + 1;
@@ -362,7 +372,7 @@ namespace Library { }
         /// <typeparam name="T">要素の型</typeparam>
         /// <param name="value">判定する値</param>
         /// <param name="l">下限の値 (含まれる)</param>
-        /// <param name="r">下限の値 (含まれない)</param>
+        /// <param name="r">上限の値 (含まれない)</param>
         /// <returns><see cref="value"/> が指定した範囲に含まれているか</returns>
         public static bool IsIn<T>(this T value, T l, T r)
             where T : IComparable<T>
@@ -486,7 +496,7 @@ namespace Library { }
             return ret;
         }
 
-        public static vector<T> ToVector<T>(this IEnumerable<T> source) => new vector<T>(source);
+//        public static vector<T> ToVector<T>(this IEnumerable<T> source) => new vector<T>(source);
     }
 
     public static class Input
@@ -641,10 +651,10 @@ namespace Library { }
             return Tuple.Create(ret1, ret2, ret3);
         }
 
-        static bool TypeEquals<T, U>() => typeof(T) == typeof(U);
-        static T ChangeType<T, U>(U a) => (T) System.Convert.ChangeType(a, typeof(T));
+        private static bool TypeEquals<T, U>() => typeof(T) == typeof(U);
+        private static T ChangeType<T, U>(U a) => (T) System.Convert.ChangeType(a, typeof(T));
 
-        static T Convert<T>(string s) => TypeEquals<T, int>() ? ChangeType<T, int>(int.Parse(s))
+        private static T Convert<T>(string s) => TypeEquals<T, int>() ? ChangeType<T, int>(int.Parse(s))
             : TypeEquals<T, long>() ? ChangeType<T, long>(long.Parse(s))
             : TypeEquals<T, double>() ? ChangeType<T, double>(double.Parse(s))
             : TypeEquals<T, char>() ? ChangeType<T, char>(s[0])
@@ -752,22 +762,21 @@ namespace Library { }
 
         public static void PrintBool(bool val, string yes = "Yes", string no = "No")
             => Console.WriteLine(val ? yes : no);
+
         public static void PrintYn(bool val) => PrintBool(val);
         public static void PrintYN(bool val) => PrintBool(val, "YES", "NO");
         public static void PrintPossible(bool val) => PrintBool(val, "Possible", "Impossible");
         public static void PrintYay(bool val) => PrintBool(val, "Yay!", ":(");
+
         public static void PrintDebug(params object[] args)
             => Console.Error.WriteLine(string.Join(" ", args));
-        
+
         /// <summary>
         /// setter で設定された値を標準出力に出力します。
         /// </summary>
         public static object cout
         {
-            set
-            {
-                Console.WriteLine(value);
-            }
+            set { Console.WriteLine(value); }
         }
 
         /// <summary>
@@ -777,21 +786,18 @@ namespace Library { }
         {
             set
             {
-                #if LOCAL
+#if LOCAL
                 Console.WriteLine(value);
-                #endif
+#endif
             }
         }
-        
+
         /// <summary>
         /// setter で設定された値を標準エラー出力に出力します。
         /// </summary>
         public static object cerr
         {
-            set
-            {
-                Console.Error.WriteLine(value);
-            }
+            set { Console.Error.WriteLine(value); }
         }
 
         public const string endl = "\n";
@@ -859,66 +865,6 @@ namespace Library { }
         }
     }
 
-    [DebuggerDisplay("Size = {" + nameof(Size) + "}")]
-    public class vector<T> : IEnumerable<T>
-    {
-        private List<T> _list;
-        private IEnumerator<T> _enumeratorImplementation;
 
-        public vector() : this(0)
-        {
-        }
-
-        public vector(int n, T value = default(T))
-        {
-            _list = new List<T>(n);
-            for (int i = 0; i < n; i++) _list.Add(value);
-            _enumeratorImplementation = _list.GetEnumerator();
-        }
-
-        public vector(IEnumerable<T> x)
-        {
-            _list = new List<T>();
-            _list.AddRange(x);
-            _enumeratorImplementation = _list.GetEnumerator();
-        }
-
-        public void Add(T value)
-        {
-            _list.Add(value);
-        }
-
-        public void PushBack(T value) => Add(value);
-
-        public void Resize(int newsize)
-        {
-            var newList = new List<T>(newsize);
-            newList.AddRange(_list);
-            for (int i = 0; i < newsize - newList.Count; i++)
-                newList.Add(default(T));
-            _list = newList;
-            _enumeratorImplementation = _list.GetEnumerator();
-        }
-
-        public T this[int index]
-        {
-            get { return _list[index]; }
-            set { _list[index] = value; }
-        }
-
-        public T At(int index) => this[index];
-        public void PopBack() => _list.RemoveAt(_list.Count - 1);
-        public void Insert(int position, T value) => _list.Insert(position, value);
-        public void Erase(int position) => _list.RemoveAt(position);
-        public void Erase(int first, int last) => _list.RemoveRange(first, last - first);
-        public void Reserve(int capacity) => _list.Capacity = capacity;
-        public void ShrinkToFit() => _list.Capacity = _list.Count;
-        public int Size => _list.Count;
-        public IEnumerator<T> GetEnumerator() => _list.GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public static implicit operator vector<T>(T[] array) => new vector<T>(array);
-        public static implicit operator vector<T>(List<T> list) => new vector<T>(list);
-    }
-    
     #endregion
 }

@@ -19,8 +19,10 @@ namespace Solve
                     Console.WriteLine("入力に失敗しました。");
                     Console.ForegroundColor = ConsoleColor.White;
                 }
-                catch (ArgumentOutOfRangeException) { }
 
+#if FILE
+                return;
+#endif
                 Console.WriteLine("---------------");
             }
         }
