@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using static System.Math;
@@ -41,7 +42,6 @@ namespace Solve
             
         }
 
-
         // ReSharper disable UnusedMember.Local
         private const int MOD = (int) 1e9 + 7,
             INF = 1000000010;
@@ -51,7 +51,7 @@ namespace Solve
 
     // ライブラリ置き場ここから
 
-    
+
 
     // ライブラリ置き場ここまで
 
@@ -64,6 +64,7 @@ namespace Library { }
     {
         public static readonly int[] dx = {-1, 0, 0, 1};
         public static readonly int[] dy = {0, 1, -1, 0};
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Assert(bool b, string message = null)
@@ -478,19 +479,60 @@ namespace Library { }
 
 
         /// <summary>
-        /// 要素数 (a, b) の、defaultValue で満たされた配列を作成します。
+        /// 要素数 (a, b) の、defaultValue で満たされたジャグ配列を作成します。
         /// </summary>
         /// <typeparam name="T">配列の型</typeparam>
         /// <param name="a">1次元の要素数</param>
         /// <param name="b">2次元の要素数</param>
         /// <param name="defaultValue">デフォルト値</param>
         /// <returns>指定した条件で初期化された配列</returns>
-        public static T[][] Array2D<T>(int a, int b, T defaultValue = default(T))
+        public static T[][] JaggedArray2D<T>(int a, int b, T defaultValue = default(T))
         {
             var ret = new T[a][];
             for (int i = 0; i < a; i++)
             {
                 ret[i] = Enumerable.Repeat(defaultValue, b).ToArray();
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// 要素数 (a, b) の，defaultValue で満たされた二次元配列を作成します。
+        /// </summary>
+        /// <param name="a">1次元の要素数</param>
+        /// <param name="b">2次元の要素数</param>
+        /// <param name="defaultValue">デフォルト値</param>
+        /// <typeparam name="T">配列の型</typeparam>
+        public static T[,] Array2D<T>(int a, int b, T defaultValue = default(T))
+        {
+            var ret = new T[a, b];
+            for (int i = 0; i < a; i++)
+            for (int j = 0; j < b; j++)
+                ret[i, j] = defaultValue;
+            return ret;
+        }
+
+        /// <summary>
+        /// ジャグ配列を2次元配列に変換します。配列の各要素の長さがすべて同じである必要があります。
+        /// </summary>
+        /// <param name="array">ジャグ配列</param>
+        /// <typeparam name="T">二次元配列</typeparam>
+        public static T[,] To2DArray<T>(this T[][] array)
+        {
+            if (!array.Any()) return new T[0, 0];
+
+            int len = array[0].Length;
+            if (array.Any(x => x.Length != len))
+                throw new ArgumentException("array の各要素の長さが異なります。", nameof(array));
+
+            var ret = new T[array.Length, len];
+            for (int i = 0; i < array.Length; i++)
+            {
+                for (int j = 0; j < len; j++)
+                {
+                    ret[i, j] = array[i][j];
+                }
             }
 
             return ret;
@@ -558,14 +600,33 @@ namespace Library { }
             return ret;
         }
 
-        public static string[][] Str2DArray(int n, int m)
-            => Enumerable.Repeat((string[]) null, n).Select(_ => StrArray(m)).ToArray();
+        public static string[,] Str2DArray(int n, int m)
+        {
+            var ret = new string[n, m];
+            for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                ret[i, j] = ReadStr;
 
-        public static int[][] Int2DArray(int n, int m, int offset = 0)
-            => Enumerable.Repeat((int[]) null, n).Select(_ => IntArray(m, offset)).ToArray();
+            return ret;
+        }
 
-        public static long[][] Long2DArray(int n, int m, long offset = 0)
-            => Enumerable.Repeat((long[]) null, n).Select(_ => LongArray(m, offset)).ToArray();
+        public static int[,] Int2DArray(int n, int m, int offset = 0)
+        {
+            var ret = new int[n, m];
+            for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                ret[i, j] = ReadInt + offset;
+            return ret;
+        }
+
+        public static long[,] Long2DArray(int n, int m, long offset = 0)
+        {
+            var ret = new long[n, m];
+            for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                ret[i, j] = ReadLong + offset;
+            return ret;
+        }
 
         public static Tuple<string[], string[]> StrArrays2(int n)
         {
@@ -864,7 +925,6 @@ namespace Library { }
             }
         }
     }
-
 
     #endregion
 }

@@ -11,6 +11,7 @@ using static Solve.Input;
 using static Solve.Methods;
 using MethodImpl = System.Runtime.CompilerServices.MethodImplAttribute;
 using MethodImplOptions = System.Runtime.CompilerServices.MethodImplOptions;
+
 #pragma warning disable
 
 namespace Solve.Library
@@ -20,11 +21,14 @@ namespace Solve.Library
     {
         //i!
         private readonly int[] _fact;
+
         //i!^-1
         private readonly int[] _inv;
 
-        public Fact() : this(200010) {}
-        
+        public Fact() : this(200010)
+        {
+        }
+
         /// <summary>
         /// 1以上N以下の階乗を計算します。
         /// </summary>
@@ -60,7 +64,8 @@ namespace Solve.Library
         public int nCr(int n, int r)
         {
             if (n - r < 0) return 0;
-            if (n >= _fact.Length) throw new ArgumentOutOfRangeException(nameof(n), "Fact クラスのインスタンスをn以上で初期化している必要があります。");
+            if (n >= _fact.Length)
+                throw new ArgumentOutOfRangeException(nameof(n), "Fact クラスのインスタンスをn以上で初期化している必要があります。");
             var ret = ModInt.One;
             // n! / (n-r)!r!
 
@@ -79,7 +84,8 @@ namespace Solve.Library
         {
             n = r + n - 1;
             if (n - r < 0) return 0;
-            if (n >= _fact.Length) throw new ArgumentOutOfRangeException(nameof(n), "Fact クラスのインスタンスをn + rより大きな数で初期化している必要があります。");
+            if (n >= _fact.Length)
+                throw new ArgumentOutOfRangeException(nameof(n), "Fact クラスのインスタンスをn + rより大きな数で初期化している必要があります。");
             return nCr(n, r);
         }
 
@@ -90,7 +96,8 @@ namespace Solve.Library
         public int nPr(int n, int r)
         {
             if (n - r < 0) return 0;
-            if (n >= _fact.Length) throw new ArgumentOutOfRangeException(nameof(n), "Fact クラスのインスタンスをn以上で初期化している必要があります。");
+            if (n >= _fact.Length)
+                throw new ArgumentOutOfRangeException(nameof(n), "Fact クラスのインスタンスをn以上で初期化している必要があります。");
             var ret = ModInt.One;
             // n! / (n-r)!r!
 
@@ -101,7 +108,7 @@ namespace Solve.Library
         }
     }
 
-    
+
     /// <summary>
     /// グラフの2頂点間の最小コストを求めるアルゴリズムです。
     /// </summary>
@@ -116,6 +123,7 @@ namespace Solve.Library
                 Cost = cost;
                 To = new List<Pair<int, long>>();
             }
+
             public readonly int Number;
             public int From { get; internal set; }
             public long Cost { get; internal set; }
@@ -125,6 +133,7 @@ namespace Solve.Library
             {
                 return a.Cost > b.Cost;
             }
+
             public static bool operator <(Node a, Node b)
             {
                 return a.Cost < b.Cost;
@@ -164,7 +173,7 @@ namespace Solve.Library
             Validate(start, nameof(start));
             Validate(end, nameof(end));
             Nodes[start].To.Add(make_pair(end, cost));
-            if(undirected) Nodes[end].To.Add(make_pair(start, cost));
+            if (undirected) Nodes[end].To.Add(make_pair(start, cost));
         }
 
         /// <summary>
@@ -209,7 +218,7 @@ namespace Solve.Library
         private static Node[] Restore(IReadOnlyList<Node> nodes, int to)
         {
             var node = nodes[to];
-            var list = new List<Node>{node};
+            var list = new List<Node> {node};
             while (node.Number != node.From)
             {
                 node = nodes[node.From];
@@ -249,14 +258,17 @@ namespace Solve.Library
                 To = t;
                 Cost = c;
             }
+
             /// <summary>
             /// 辺の始点
             /// </summary>
             public int From { get; }
+
             /// <summary>
             /// 辺の終点
             /// </summary>
             public int To { get; }
+
             /// <summary>
             /// 辺のコスト
             /// </summary>
@@ -293,10 +305,10 @@ namespace Solve.Library
         {
             Validate(start, nameof(start));
             Validate(end, nameof(end));
-            
+
             _edges.Add(new Edge(start, end, cost));
-            if(undirected)
-                _edges.Add(new Edge(end,start,cost));
+            if (undirected)
+                _edges.Add(new Edge(end, start, cost));
         }
 
         public long? Run(int start, int end, bool restart = false)
@@ -305,7 +317,7 @@ namespace Solve.Library
             Validate(end, nameof(end));
 
             var dist = restart ? _dist.ToArray() : _dist;
-            
+
             dist[start] = 0;
 
             for (int i = 0; i < _v; i++)
@@ -314,7 +326,7 @@ namespace Solve.Library
                 foreach (var edge in _edges)
                 {
                     if (dist[edge.From] == INF) continue;
-                    if (chmin(ref dist[edge.To], dist[edge.From] + edge.Cost) 
+                    if (chmin(ref dist[edge.To], dist[edge.From] + edge.Cost)
                         && i == _v - 1)
                     {
                         return null;
@@ -331,7 +343,7 @@ namespace Solve.Library
                 throw new ArgumentOutOfRangeException(argument, $"{argument} は 0 以上 頂点数 未満 でなければなりません。");
         }
     }
-    
+
     /// <summary>
     /// 最小全域木を求めるアルゴリズムです。
     /// </summary>
@@ -354,14 +366,17 @@ namespace Solve.Library
                 To = t;
                 Cost = c;
             }
+
             /// <summary>
             /// 辺の始点
             /// </summary>
             public int From { get; }
+
             /// <summary>
             /// 辺の終点
             /// </summary>
             public int To { get; }
+
             /// <summary>
             /// 辺のコスト
             /// </summary>
@@ -377,6 +392,7 @@ namespace Solve.Library
 
         private readonly UnionFind _uf;
         private readonly List<Edge> _edges, _result;
+
         /// <summary>
         /// 最小全域木が構築済みかどうかを取得します。
         /// </summary>
@@ -440,10 +456,9 @@ namespace Solve.Library
                 _uf.Connect(edge.From, edge.To);
             }
         }
-
     }
 
-    
+
     /// <summary>
     /// SegmentTree 一点更新区間取得
     /// </summary>
@@ -502,17 +517,17 @@ namespace Solve.Library
     /// SegmentTree 区間更新一点取得
     /// </summary>
     /// <typeparam name="T">要素の型</typeparam>
-    public class LazySegmentTree<T>
+    public class SegmentTree2<T>
     {
         public readonly int Size;
         private readonly T Identity;
-        Func<T, T, T> Merge;
+        readonly Func<T, T, T> Merge;
         private readonly int LeafCount;
-        int Height;
-        private T[] Operators;
+        private readonly int Height;
+        private readonly T[] Operators;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public LazySegmentTree(int size, T identity, Func<T, T, T> merge)
+        public SegmentTree2(int size, T identity, Func<T, T, T> merge)
         {
             Size = size;
             Identity = identity;
@@ -609,6 +624,138 @@ namespace Solve.Library
         }
     }
 
+    public class LazySegmentTree<T> : LazySegmentTree<T, T>
+        where T : IEquatable<T>
+    {
+        public LazySegmentTree(
+            int n,
+            Func<T, T, T> f,
+            Func<T, T, T> g,
+            Func<T, T, T> h,
+            T identity = default(T),
+            T operatorIdentity = default(T))
+        : base(n,f,g,h,identity, operatorIdentity)
+        {
+        }
+    }
+
+    public class LazySegmentTree<T, TOperator>
+        where TOperator : IEquatable<TOperator>
+    {
+        private readonly int _size;
+        public int Size => _size;
+        private readonly int _height;
+
+        private T[] _data;
+        private TOperator[] _lazy;
+
+        private readonly Func<T, T, T> _f;
+        private readonly Func<T, TOperator, T> _g;
+        private readonly Func<TOperator, TOperator, TOperator> _h;
+        private readonly T _identity;
+        private readonly TOperator _operatorIdentity;
+
+        public LazySegmentTree(
+            int n,
+            Func<T, T, T> f,
+            Func<T, TOperator, T> g,
+            Func<TOperator, TOperator, TOperator> h,
+            T identity = default(T),
+            TOperator operatorIdentity = default(TOperator))
+        {
+            int sz = 1;
+            int height = 0;
+            while (sz < n)
+            {
+                sz <<= 1;
+                height++;
+            }
+
+            _data = Repeat(identity, 2 * sz).ToArray();
+            _lazy = Repeat(operatorIdentity, 2 * sz).ToArray();
+        }
+
+        public void Set(int i, T x) => _data[i + _size] = x;
+
+        public void Build()
+        {
+            for (int i = _size - 1; i > 0; i--)
+                _data[i] = _f(_data[2 * i + 0], _data[2 * i + 1]);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Propagate(int i)
+        {
+            if (_lazy[i].Equals(_operatorIdentity)) return;
+            _lazy[2 * i + 0] = _h(_lazy[2 * i + 0], _lazy[i]);
+            _lazy[2 * i + 1] = _h(_lazy[2 * i + 1], _lazy[i]);
+            _data[i] = Reflect(i);
+            _lazy[i] = _operatorIdentity;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private T Reflect(int i) => _lazy[i].Equals(_operatorIdentity) ? _data[i] : _g(_data[i], _lazy[i]);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Recalc(int i)
+        {
+            while ((i >>= 1) > 0)
+                _data[i] = _f(Reflect(2 * i + 0), Reflect(2 * i + 1));
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void Thrust(int i)
+        {
+            for (int j = _height; j > 0; j--)
+                Propagate(i >> j);
+        }
+
+        public void Update(int a, int b, TOperator x)
+        {
+            Thrust(a += _size);
+            Thrust(b += _size - 1);
+            for (int l = a, r = b + 1; l < r; l >>= 1, r >>= 1)
+            {
+
+                if ((l & 1) != 0)
+                {
+                    _lazy[l] = _h(_lazy[l], x);
+                    ++l;
+                }
+
+                if ((r & 1) != 0)
+                {
+                    --r;
+                    _lazy[r] = _h(_lazy[r], x);
+                }
+            }
+
+            Recalc(a);
+            Recalc(b);
+        }
+
+        public T Query(int a, int b)
+        {
+            Thrust(a += _size);
+            Thrust(b += _size - 1);
+            T L = _identity, R = _identity;
+            for (int l = a, r = b + 1; l < r; l >>= 1, r >>= 1)
+            {
+                if ((l & 1) != 0) L = _f(L, Reflect(l++));
+                if ((r & 1) != 0) R = _f(Reflect(--r), R);
+            }
+
+            return _f(L, R);
+        }
+
+        public T this[int k]
+        {
+            get { return Query(k, k + 1); }
+            set { Set(k, value); }
+        }
+    }
+
+
     /// <summary>
     /// 2点間の最小コストを求めるアルゴリズムです。
     /// </summary>
@@ -618,6 +765,7 @@ namespace Solve.Library
         private readonly long[][] _costs;
         private int N;
         public bool Built { get; private set; }
+
         public WarshallFloyd(int N)
         {
             this.N = N;
@@ -650,8 +798,10 @@ namespace Solve.Library
             {
                 if (!Built)
                     throw new InvalidOperationException("構築後に取得する必要があります。");
-                if (!a.IsIn(0, N)) throw new ArgumentOutOfRangeException(nameof(a),$"引数 {nameof(a)} は 0 以上 N 未満である必要があります。");
-                if (!b.IsIn(0, N)) throw new ArgumentOutOfRangeException(nameof(b),$"引数 {nameof(b)} は 0 以上 N 未満である必要があります。");
+                if (!a.IsIn(0, N))
+                    throw new ArgumentOutOfRangeException(nameof(a), $"引数 {nameof(a)} は 0 以上 N 未満である必要があります。");
+                if (!b.IsIn(0, N))
+                    throw new ArgumentOutOfRangeException(nameof(b), $"引数 {nameof(b)} は 0 以上 N 未満である必要があります。");
                 return _costs[a][b];
             }
 
@@ -659,13 +809,13 @@ namespace Solve.Library
             {
                 if (Built)
                     throw new InvalidOperationException("構築後に値を変更することはできません。");
-                if (!a.IsIn(0, N)) throw new ArgumentOutOfRangeException(nameof(a), $"引数 {nameof(a)} は 0 以上 N 未満である必要があります。");
-                if (!b.IsIn(0, N)) throw new ArgumentOutOfRangeException(nameof(b), $"引数 {nameof(b)} は 0 以上 N 未満である必要があります。");
+                if (!a.IsIn(0, N))
+                    throw new ArgumentOutOfRangeException(nameof(a), $"引数 {nameof(a)} は 0 以上 N 未満である必要があります。");
+                if (!b.IsIn(0, N))
+                    throw new ArgumentOutOfRangeException(nameof(b), $"引数 {nameof(b)} は 0 以上 N 未満である必要があります。");
                 _costs[a][b] = value;
             }
         }
-
-
     }
 
     // MaxBy, MinBy
@@ -739,13 +889,11 @@ namespace Solve.Library
 
             return result;
         }
-        
     }
 
     // 素因数分解, 約数の個数
     public static class Math
     {
-        
         /// <summary>
         /// valueを素因数分解し、素因数を列挙します。
         /// </summary>
@@ -839,7 +987,7 @@ namespace Solve.Library
             if (value > 1) dict.Add(value, 1);
             return dict;
         }
-        
+
         /// <summary>
         /// valueの約数の個数を求めます。
         /// </summary>
@@ -851,7 +999,150 @@ namespace Solve.Library
             return fact.Select(x => x.Value + 1L).Aggregate((m, x) => m * x);
         }
     }
-    
+
+    /// <summary>
+    /// グリッド上の幅優先探索
+    /// </summary>
+    public static class GridBfs
+    {
+        public static int Run(char[,] grid, char start = 'S', char goal = 'G', char wall = '#')
+        {
+            int sy = -1, sx = -1, gy = -1, gx = -1;
+            int H = grid.GetLength(0), W = grid.GetLength(1);
+            var newGrid = new bool[H, W];
+            for (int i = 0; i < H; i++)
+            {
+                for (int j = 0; j < W; j++)
+                {
+                    if (grid[i, j] == start)
+                    {
+                        if (sy != -1)
+                            throw new ArgumentException("grid 内に start が複数存在します。", nameof(grid));
+                        sy = i;
+                        sx = j;
+                        newGrid[i, j] = true;
+                    }
+                    else if (grid[i, j] == goal)
+                    {
+                        if (gy != -1)
+                            throw new ArgumentException("grid 内に goal が複数存在します。", nameof(grid));
+                        gy = i;
+                        gx = j;
+                        newGrid[i, j] = true;
+                    }
+                    else
+                    {
+                        newGrid[i, j] = grid[i, j] != wall;
+                    }
+                }
+            }
+
+            if (sy == -1) throw new ArgumentException("grid 内に start が存在しません。", nameof(grid));
+            if (gy == -1) throw new ArgumentException("grid 内に goal が存在しません。", nameof(grid));
+            return Run(newGrid, sy, sx, gy, gx);
+        }
+
+        public static int Run(char[,] grid, int sy, int sx, int gy, int gx, char wall = '#')
+            => Run(grid, sy, sx, gy, gx, new[] {wall});
+
+        public static int Run(char[,] grid, int sy, int sx, int gy, int gx, IEnumerable<char> walls)
+        {
+            if (walls == null) throw new ArgumentNullException(nameof(walls));
+            int H = grid.GetLength(0);
+            int W = grid.GetLength(1);
+            if (sy < 0 || sy >= H)
+                throw new ArgumentOutOfRangeException(nameof(sy), "sy が grid の高さの範囲外です。");
+            if (gy < 0 || gy >= H)
+                throw new ArgumentOutOfRangeException(nameof(sy), "gy が grid の高さの範囲外です。");
+            if (sx < 0 || sx >= W)
+                throw new ArgumentOutOfRangeException(nameof(sy), "sx が grid の幅の範囲外です。");
+            if (gx < 0 || gx >= W)
+                throw new ArgumentOutOfRangeException(nameof(sy), "gx が grid の幅の範囲外です。");
+            return Run(grid, sy, sx, walls)[gy, gx];
+        }
+
+        public static int[,] Run(char[,] grid, int sy, int sx, IEnumerable<char> walls)
+        {
+            if (grid == null) throw new ArgumentNullException(nameof(grid));
+            if (walls == null) throw new ArgumentNullException(nameof(walls));
+            int H = grid.GetLength(0);
+            int W = grid.GetLength(1);
+            if (sy < 0 || sy >= H)
+                throw new ArgumentOutOfRangeException(nameof(sy), "sy が grid の高さの範囲外です。");
+            if (sx < 0 || sx >= W)
+                throw new ArgumentOutOfRangeException(nameof(sy), "sx が grid の幅の範囲外です。");
+
+            var wallSet = new HashSet<char>(walls);
+            if (!wallSet.Any()) throw new ArgumentException("walls に文字が指定されていません。", nameof(walls));
+
+            var boolGrid = new bool[H, W];
+            for (int i = 0; i < H; i++)
+            for (int j = 0; j < W; j++)
+                boolGrid[i, j] = !wallSet.Contains(grid[i, j]);
+
+            return Run(boolGrid, sy, sx);
+        }
+
+        public static int Run(string[] grid, char start = 'S', char goal = 'G', char wall = '#')
+            => Run(grid.To2DArray(), start, goal, wall);
+
+        public static int Run(string[] grid, int sy, int sx, int gy, int gx, char wall = '#')
+            => Run(grid.To2DArray(), sy,sx,gy,gx, new[]{wall});
+
+        public static int Run(string[] grid, int sy, int sx, int gy, int gx, IEnumerable<char> walls)
+            => Run(grid.To2DArray(), sy, sx, gy, gx, walls);
+
+        public static int[,] Run(string[] grid, int sy, int sx, IEnumerable<char> walls)
+            => Run(grid.To2DArray(), sy, sx, walls);
+        
+        public static int Run(bool[,] grid, int sy, int sx, int gy, int gx)
+        {
+            int H = grid.GetLength(0);
+            int W = grid.GetLength(1);
+            if (sy < 0 || sy >= H)
+                throw new ArgumentOutOfRangeException(nameof(sy), "sy が grid の高さの範囲外です。");
+            if (gy < 0 || gy >= H)
+                throw new ArgumentOutOfRangeException(nameof(sy), "gy が grid の高さの範囲外です。");
+            if (sx < 0 || sx >= W)
+                throw new ArgumentOutOfRangeException(nameof(sy), "sx が grid の幅の範囲外です。");
+            if (gx < 0 || gx >= W)
+                throw new ArgumentOutOfRangeException(nameof(sy), "gx が grid の幅の範囲外です。");
+            return Run(grid, sy, sx)[gy, gx];
+        }
+        
+        public static int[,] Run(bool[,] grid, int sy, int sx)
+        {
+            if (grid == null) throw new ArgumentNullException(nameof(grid));
+            int H = grid.GetLength(0);
+            int W = grid.GetLength(1);
+            if (sy < 0 || sy >= H)
+                throw new ArgumentOutOfRangeException(nameof(sy), "sy が grid の高さの範囲外です。");
+            if (sx < 0 || sx >= W)
+                throw new ArgumentOutOfRangeException(nameof(sy), "sx が grid の幅の範囲外です。");
+
+            var queue = new Queue<Pair<int, int>>();
+            queue.Enqueue(make_pair(sy, sx));
+            var ret = Array2D(H, W, -1);
+            ret[sy, sx] = 0;
+            while (queue.Any())
+            {
+                var pr = queue.Dequeue();
+                int y = pr.first, x = pr.second;
+                for (int __d = 0; __d < 4; __d++)
+                {
+                    int ny = y + dy[__d], nx = x + dx[__d];
+                    if ((uint) ny >= H || (uint) nx >= W || ret[ny, nx] != -1 || !grid[ny, nx]) continue;
+
+                    ret[ny, nx] = ret[y, x] + 1;
+                    queue.Enqueue(make_pair(ny, nx));
+                }
+            }
+
+            return ret;
+        }
+        private static char[,] To2DArray(this IEnumerable<string> array) => array.Select(x => x.ToCharArray()).ToArray().To2DArray();
+    }
+
     /// <summary>
     /// SegmentTree 二分木 を表します。
     /// </summary>
@@ -876,7 +1167,8 @@ namespace Solve.Library
         /// <returns><see cref="index"/>の要素</returns>
         public T this[int index]
         {
-            get {
+            get
+            {
                 index += _leafCount;
                 var ret = _seg[index];
                 while ((index >>= 1) > 0)
@@ -924,7 +1216,9 @@ namespace Solve.Library
         /// <param name="operatorFunc">操作 (モノイド)</param>
         /// <param name="measureValue">モノイドの単位元</param>
         public ___SegmentTree(int N, Func<T, T, T> operatorFunc, T measure = default(T))
-            : this(Enumerable.Repeat(measure, N).ToArray(), operatorFunc, measure) { }
+            : this(Enumerable.Repeat(measure, N).ToArray(), operatorFunc, measure)
+        {
+        }
 
         /// <summary>
         /// <see cref="SegmentTree{T}"/> を構築します。
@@ -986,8 +1280,8 @@ namespace Solve.Library
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
-    
-    
+
+
     /// <summary>
     /// Union-Find 木の集合を表します。
     /// </summary>
@@ -1037,12 +1331,13 @@ namespace Solve.Library
         /// <summary>根とその根に所属する葉をグループ化して返します。</summary>
         public ILookup<int, int> ToLookup()
             => EnumeratePairs().ToLookup(x => x.Key, x => x.Value);
+
         private IEnumerable<KeyValuePair<int, int>> EnumeratePairs()
         {
             for (int i = 0; i < _parent.Length; i++) yield return new KeyValuePair<int, int>(Find(i), i);
         }
     }
-    
+
     [DebuggerDisplay("Value = {" + nameof(_value) + "}")]
     public struct ModInt : IEquatable<ModInt>, IComparable<ModInt>
     {
@@ -1161,12 +1456,17 @@ namespace Solve.Library
         public int Count { get; private set; }
         private readonly bool Descendance;
         private T[] data = new T[65536];
+
         /// <summary>
         /// PriorityQueue を初期化します。
         /// </summary>
         /// <param name="descendance">オブジェクトを大きい順で比較するか。</param>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public PriorityQueue(bool descendance = false) { Descendance = descendance; }
+        public PriorityQueue(bool descendance = false)
+        {
+            Descendance = descendance;
+        }
+
         /// <summary>
         /// キューの最小 (<see cref="Descendance"/> が true の場合は最大) の要素を取得します。
         /// </summary>
@@ -1174,9 +1474,13 @@ namespace Solve.Library
         public T Top
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get { ValidateNonEmpty(); return data[1]; }
+            get
+            {
+                ValidateNonEmpty();
+                return data[1];
+            }
         }
-        
+
         /// <summary>
         /// キューの最小 (<see cref="Descendance"/> が true の場合は最大) の要素を削除して返します。
         /// </summary>
@@ -1197,15 +1501,18 @@ namespace Solve.Library
                 }
                 else
                 {
-                    var nextIndex = data[index << 1].CompareTo(data[(index << 1) + 1]) <= 0 ^ Descendance ? index << 1 : (index << 1) + 1;
+                    var nextIndex = data[index << 1].CompareTo(data[(index << 1) + 1]) <= 0 ^ Descendance
+                        ? index << 1
+                        : (index << 1) + 1;
                     if (elem.CompareTo(data[nextIndex]) > 0 ^ Descendance) data[index] = data[index = nextIndex];
                     else break;
                 }
             }
+
             data[index] = elem;
             return top;
         }
-        
+
         /// <summary>
         /// キューに要素を追加します。
         /// </summary>
@@ -1221,8 +1528,10 @@ namespace Solve.Library
                 if (data[index >> 1].CompareTo(value) > 0 ^ Descendance) data[index] = data[index >>= 1];
                 else break;
             }
+
             data[index] = value;
         }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Extend(int newSize)
         {
@@ -1230,10 +1539,14 @@ namespace Solve.Library
             data.CopyTo(newDatas, 0);
             data = newDatas;
         }
-        private void ValidateNonEmpty() { if (Count == 0) throw new Exception(); }
+
+        private void ValidateNonEmpty()
+        {
+            if (Count == 0) throw new Exception();
+        }
     }
 
-    
+
     [DebuggerDisplay("Size = {" + nameof(Size) + "}")]
     public class vector<T> : IEnumerable<T>
     {
@@ -1267,11 +1580,19 @@ namespace Solve.Library
 
         public void Resize(int newsize)
         {
-            var newList = new List<T>(newsize);
-            newList.AddRange(_list);
-            for (int i = 0; i < newsize - newList.Count; i++)
-                newList.Add(default(T));
-            _list = newList;
+            if (Size > newsize)
+            {
+                _list = new List<T>(_list.Take(newsize));
+            }
+            else
+            {
+                var newList = new List<T>(newsize);
+                newList.AddRange(_list);
+                for (int i = 0; i < newsize - newList.Count; i++)
+                    newList.Add(default(T));
+                _list = newList;
+            }
+
             _enumeratorImplementation = _list.GetEnumerator();
         }
 
@@ -1289,12 +1610,12 @@ namespace Solve.Library
         public void Reserve(int capacity) => _list.Capacity = capacity;
         public void ShrinkToFit() => _list.Capacity = _list.Count;
         public int Size => _list.Count;
-        public IEnumerator<T> GetEnumerator() => _list.GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => _enumeratorImplementation;
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         public static implicit operator vector<T>(T[] array) => new vector<T>(array);
         public static implicit operator vector<T>(List<T> list) => new vector<T>(list);
     }
-    
+
     //実装途中
     [Obsolete]
     public class MultiSet<T> : ICollection<T>
@@ -1344,7 +1665,7 @@ namespace Solve.Library
         public void Add(T item)
         {
             if (item == null) return;
-            if(!_dict.ContainsKey(item))
+            if (!_dict.ContainsKey(item))
                 _dict.Add(item, 0);
             _dict[item]++;
         }
@@ -1401,8 +1722,15 @@ namespace Solve.Library
 
             public static Node Merge(Node a, Node b)
             {
-                if (a == null) { return b; }
-                if (b == null) { return a; }
+                if (a == null)
+                {
+                    return b;
+                }
+
+                if (b == null)
+                {
+                    return a;
+                }
 
                 if (a.m_rank < b.m_rank)
                 {
@@ -1416,7 +1744,10 @@ namespace Solve.Library
 
             public static Tuple<Node, Node> Split(Node t, int k)
             {
-                if (t == null) { return new Tuple<Node, Node>(null, null); }
+                if (t == null)
+                {
+                    return new Tuple<Node, Node>(null, null);
+                }
 
                 if (k <= Count(t.m_lch))
                 {
@@ -1446,7 +1777,8 @@ namespace Solve.Library
 
             public T this[int i]
             {
-                get {
+                get
+                {
                     int L = Count(m_lch);
                     if (i < L)
                         return m_lch[i];
@@ -1457,6 +1789,7 @@ namespace Solve.Library
         }
 
         private Node node;
+
         /// <summary>
         /// 要素を挿入する
         /// </summary>
@@ -1474,6 +1807,7 @@ namespace Solve.Library
                 node = new Node(value);
             }
         }
+
         /// <summary>
         /// valueのindexを返す
         /// </summary>
@@ -1495,7 +1829,7 @@ namespace Solve.Library
         public Tree(int N)
         {
             _N = N;
-            _graph = Enumerable.Repeat((List<int>)null, N).Select(x => new List<int>()).ToArray();
+            _graph = Enumerable.Repeat((List<int>) null, N).Select(x => new List<int>()).ToArray();
         }
 
         public void AddEdge(int a, int b)
@@ -1520,11 +1854,13 @@ namespace Solve.Library
     /// </remarks>
     public class SortedArray<T>
         : IEnumerable<T>
-      where T : IComparable<T>
+        where T : IComparable<T>
     {
         readonly List<T> buffer;
 
-        public SortedArray() : this(256) { }
+        public SortedArray() : this(256)
+        {
+        }
 
         public SortedArray(int capacity)
         {
@@ -1639,13 +1975,22 @@ namespace Solve.Library
         int offset, capacity;
         public int Count { get; private set; }
 
-        public Deque(int cap) { buf = new T[capacity = cap]; }
-        public Deque() { buf = new T[capacity = 16]; }
+        public Deque(int cap)
+        {
+            buf = new T[capacity = cap];
+        }
+
+        public Deque()
+        {
+            buf = new T[capacity = 16];
+        }
+
         public T this[int index]
         {
             get { return buf[getIndex(index)]; }
             set { buf[getIndex(index)] = value; }
         }
+
         private int getIndex(int index)
         {
             if (index >= capacity)
@@ -1655,6 +2000,7 @@ namespace Solve.Library
                 ret -= capacity;
             return ret;
         }
+
         public void PushFront(T item)
         {
             if (Count == capacity) Extend();
@@ -1662,6 +2008,7 @@ namespace Solve.Library
             buf[offset] = item;
             ++Count;
         }
+
         public T PopFront()
         {
             if (Count == 0)
@@ -1671,6 +2018,7 @@ namespace Solve.Library
             if (offset >= capacity) offset -= capacity;
             return ret;
         }
+
         public void PushBack(T item)
         {
             if (Count == capacity) Extend();
@@ -1678,12 +2026,14 @@ namespace Solve.Library
             if (id >= capacity) id -= capacity;
             buf[id] = item;
         }
+
         public T PopBack()
         {
             if (Count == 0)
                 throw new InvalidOperationException("collection is empty");
             return buf[getIndex(--Count)];
         }
+
         public void Insert(int index, T item)
         {
             if (index > Count) throw new IndexOutOfRangeException();
@@ -1692,6 +2042,7 @@ namespace Solve.Library
                 this[i] = this[i + 1];
             this[index] = item;
         }
+
         public T RemoveAt(int index)
         {
             if (index < 0 || index >= Count) throw new IndexOutOfRangeException();
@@ -1701,6 +2052,7 @@ namespace Solve.Library
             PopFront();
             return ret;
         }
+
         private void Extend()
         {
             T[] newBuffer = new T[capacity << 1];
@@ -1711,13 +2063,16 @@ namespace Solve.Library
                 Array.Copy(buf, 0, newBuffer, len, Count - len);
             }
             else Array.Copy(buf, offset, newBuffer, 0, Count);
+
             buf = newBuffer;
             offset = 0;
             capacity <<= 1;
         }
+
         public T[] Items
         {
-            get {
+            get
+            {
                 var a = new T[Count];
                 for (int i = 0; i < Count; i++)
                     a[i] = this[i];
@@ -1778,7 +2133,7 @@ namespace Solve.Library
             get { return _numerator; }
             set
             {
-                if(value==0)throw new ArgumentException();
+                if (value == 0) throw new ArgumentException();
                 _numerator = value;
                 Reduction();
             }
@@ -1807,7 +2162,8 @@ namespace Solve.Library
                 right.Denominator * (numeratorLcm / right.Numerator), numeratorLcm);
         }
 
-        public static Fraction operator -(Fraction left, Fraction right) => left + new Fraction(right.Denominator * -1, right.Numerator);
+        public static Fraction operator -(Fraction left, Fraction right) =>
+            left + new Fraction(right.Denominator * -1, right.Numerator);
 
         public static Fraction operator +(Fraction left, long right) => left + new Fraction(right, 1);
         public static Fraction operator -(Fraction left, long right) => left + new Fraction(-right, 1);
@@ -1820,7 +2176,8 @@ namespace Solve.Library
             var a = Gcd(left.Denominator, right.Numerator);
             //右の分子-左の分母
             var b = Gcd(right.Denominator, left.Numerator);
-            return new Fraction((left.Denominator / a) * (right.Denominator / b), (left.Numerator / b) * (right.Numerator / a));
+            return new Fraction((left.Denominator / a) * (right.Denominator / b),
+                (left.Numerator / b) * (right.Numerator / a));
         }
 
         public static Fraction operator *(Fraction left, long right)
@@ -1862,7 +2219,6 @@ namespace Solve.Library
 
             return s;
         }
-
     }
 
     public class Trans
